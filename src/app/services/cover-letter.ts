@@ -93,40 +93,40 @@ export class CoverLetter {
       name: 'Creative',
       description: 'A modern, creative template with visual appeal',
       template: `
-        <div class="space-y-6">
+        <div class="space-y-6 dark:text-gray-200">
           <div class="border-l-4 border-{{themeColor}}-500 pl-4">
             <h1 class="text-3xl font-bold text-{{themeColor}}-700">{{fullName}}</h1>
-            <p class="text-lg text-gray-600">Applying for {{jobTitle}}</p>
-            <div class="mt-2 text-sm text-gray-500">
+            <p class="text-lg text-gray-600 dark:text-gray-400">Applying for {{jobTitle}}</p>
+            <div class="mt-2 text-sm text-gray-500 dark:text-gray-400">
               {{email}} | {{phone}} | {{address}}
             </div>
           </div>
 
           <div class="bg-{{themeColor}}-50 p-4 rounded-lg">
             <h2 class="text-lg font-semibold text-{{themeColor}}-800 mb-2">Dear {{hiringManager}},</h2>
-            <p class="text-gray-700">{{introduction}}</p>
+            <p class="text-gray-700 dark:text-gray-400">{{introduction}}</p>
           </div>
 
           <div>
             <h3 class="text-xl font-semibold text-{{themeColor}}-700 mb-3">Why I'm Perfect for {{companyName}}</h3>
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
               {{#if_has_skills}}
-              <div class="bg-white p-4 rounded-lg border border-{{themeColor}}-200">
+              <div class="bg-white dark:bg-gray-800 p-4 rounded-lg border border-{{themeColor}}-200">
                 <h4 class="font-medium text-{{themeColor}}-600 mb-2">Key Skills</h4>
                 <ul class="space-y-1 text-sm">
                   {{skillsList}}
                 </ul>
               </div>
               {{/if_has_skills}}
-              <div class="bg-white p-4 rounded-lg border border-{{themeColor}}-200">
+              <div class="bg-white dark:bg-gray-800 p-4 rounded-lg border border-{{themeColor}}-200">
                 <h4 class="font-medium text-{{themeColor}}-600 mb-2">Experience</h4>
-                <p class="text-sm text-gray-700">{{experience}}</p>
+                <p class="text-sm text-gray-700 dark:text-gray-400">{{experience}}</p>
               </div>
             </div>
           </div>
 
-          <div class="p-4 bg-gray-50 rounded-lg">
-            <p class="text-gray-700">{{closing}}</p>
+          <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
+            <p class="text-gray-700 dark:text-gray-400">{{closing}}</p>
           </div>
 
           <div class="text-right">
@@ -155,23 +155,23 @@ export class CoverLetter {
       name: 'Modern',
       description: 'A clean, minimalist template with modern aesthetics',
       template: `
-        <div class="space-y-8">
-          <div class="space-y-2 text-center">
+        <div class="space-y-8 dark:text-gray-200">
+          <div class="space-y-2 text-center dark:text-gray-200">
             <h1 class="text-4xl font-light text-{{themeColor}}-800">{{fullName}}</h1>
             <div class="w-16 h-1 bg-{{themeColor}}-500 mx-auto"></div>
-            <p class="text-gray-600">{{email}} • {{phone}}</p>
-            <p class="text-sm text-gray-500">{{address}}</p>
+            <p class="text-gray-600 dark:text-gray-400">{{email}} • {{phone}}</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">{{address}}</p>
           </div>
 
-          <div class="text-center">
+          <div class="text-center dark:text-gray-200">
             <h2 class="text-2xl font-light text-{{themeColor}}-700 mb-4">Application for {{jobTitle}}</h2>
-            <p class="text-lg text-gray-600">{{companyName}}</p>
+            <p class="text-lg text-gray-600 dark:text-gray-400">{{companyName}}</p>
           </div>
 
-          <div class="space-y-6">
+          <div class="space-y-6 dark:text-gray-200">
             <div class="border-b border-{{themeColor}}-200 pb-4">
               <h3 class="text-lg font-medium text-{{themeColor}}-700 mb-3">Introduction</h3>
-              <p class="leading-relaxed text-gray-700">{{introduction}}</p>
+              <p class="leading-relaxed text-gray-700 dark:text-gray-400">{{introduction}}</p>
             </div>
 
             {{#if_has_skills}}
@@ -185,16 +185,16 @@ export class CoverLetter {
 
             <div class="border-b border-{{themeColor}}-200 pb-4">
               <h3 class="text-lg font-medium text-{{themeColor}}-700 mb-3">Professional Experience</h3>
-              <p class="leading-relaxed text-gray-700">{{experience}}</p>
+              <p class="leading-relaxed text-gray-700 dark:text-gray-400">{{experience}}</p>
             </div>
 
             <div>
               <h3 class="text-lg font-medium text-{{themeColor}}-700 mb-3">Closing Statement</h3>
-              <p class="leading-relaxed text-gray-700">{{closing}}</p>
+              <p class="leading-relaxed text-gray-700 dark:text-gray-400">{{closing}}</p>
             </div>
           </div>
 
-          <div class="pt-6 text-center">
+          <div class="pt-6 text-center dark:text-gray-200">
             <p class="text-sm text-gray-500">{{date}}</p>
             <p class="text-{{themeColor}}-700 font-medium mt-2">{{fullName}}</p>
           </div>

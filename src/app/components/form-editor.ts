@@ -150,7 +150,7 @@ import { CoverLetterData } from '../models/cover-letter';
               formControlName="experience"
               class="form-textarea"
               placeholder="Describe your relevant experience and achievements..."
-              rows="4"
+              rows="6"
             ></textarea>
           </div>
 
