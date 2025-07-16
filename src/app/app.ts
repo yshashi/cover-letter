@@ -1,9 +1,12 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { TemplateSelectorComponent } from "./components/template-selector";
+import { HeaderComponent } from "./components/header";
+import { FormEditor } from "./components/form-editor";
+import { PreviewComponent } from "./components/preview";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [TemplateSelectorComponent, HeaderComponent, FormEditor, PreviewComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
