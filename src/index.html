@@ -18,9 +18,28 @@
     <base href="/" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Fallback system fonts if CDN fails -->
+    <style>
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: local('Inter'), local('Inter-Regular'), local('Segoe UI'), local('Helvetica');
+      }
+      @font-face {
+        font-family: 'Roboto';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: local('Roboto'), local('Roboto-Regular'), local('Arial'), local('Helvetica');
+      }
+    </style>
+    <!-- Try loading from CDN with fallback -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap"
       rel="stylesheet"
+      onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/@fontsource/inter/index.css';"  
     />
   </head>
   <body class="font-['Inter'] antialiased">
