@@ -11,36 +11,98 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Smooth scrolling and better font rendering */
+  html {
+    @apply scroll-smooth antialiased;
+  }
 }
 
 @layer components {
+  /* Button Styles */
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+    @apply bg-gradient-primary-to-secondary hover:shadow-glow text-white font-medium py-2 px-6 rounded-lg transition-all duration-300 animate-fade-in;
   }
 
   .btn-secondary {
-    @apply bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+    @apply bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium py-2 px-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300;
   }
-
+  
+  .btn-accent {
+    @apply bg-gradient-secondary-to-accent hover:shadow-glow-accent text-white font-medium py-2 px-6 rounded-lg transition-all duration-300;
+  }
+  
+  /* Form Controls */
   .form-input {
-    @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-200;
+    @apply w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all duration-300 shadow-sm hover:shadow;
   }
 
   .form-textarea {
-    @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-200 resize-y min-h-[100px];
+    @apply w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all duration-300 resize-y min-h-[100px] shadow-sm hover:shadow;
   }
 
   .form-label {
-    @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
+    @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2;
   }
-
+  
+  /* Card Styles */
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700 p-6 transition-all duration-300 hover:shadow-md;
+  }
+  
+  .card-gradient {
+    @apply bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700 p-6 transition-all duration-300 hover:shadow-md;
+  }
+  
+  /* Preview Container */
   .preview-container {
-    @apply bg-white text-gray-900 shadow-lg rounded-lg p-8 max-w-4xl mx-auto;
+    @apply bg-white text-gray-900 shadow-lg rounded-xl p-8 max-w-4xl mx-auto border border-gray-100;
+  }
+  
+  /* Badge Styles */
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200;
+  }
+  
+  .badge-secondary {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-secondary-100 text-secondary-800 dark:bg-secondary-900 dark:text-secondary-200;
+  }
+  
+  .badge-accent {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-200;
+  }
+  
+  /* Animated Gradient Background */
+  .animated-gradient {
+    @apply bg-gradient-primary-to-secondary bg-[length:200%_200%] animate-gradient;
+  }
+  
+  /* Section Styles */
+  .section-title {
+    @apply text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center;
+  }
+  
+  .section-title::before {
+    @apply content-[''] w-2 h-6 bg-gradient-primary-to-secondary rounded mr-2 inline-block;
   }
 }
 
+/* Animation Delays */
+.delay-100 {
+  animation-delay: 100ms;
+}
+
+.delay-200 {
+  animation-delay: 200ms;
+}
+
+.delay-300 {
+  animation-delay: 300ms;
+}
+
+/* Print Styles */
 @media print {
   .preview-container {
-    @apply shadow-none;
+    @apply shadow-none border-0;
   }
 }

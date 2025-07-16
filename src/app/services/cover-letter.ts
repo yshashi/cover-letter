@@ -31,13 +31,13 @@ export class CoverLetter {
       description: 'A classic, formal cover letter template',
       template: `
         <div class="space-y-6">
-          <div class="text-right text-sm text-gray-600">
+          <div class="text-sm text-right text-gray-600">
             {{date}}
           </div>
 
           <div class="space-y-1">
             <h1 class="text-2xl font-bold text-{{themeColor}}-700">{{fullName}}</h1>
-            <div class="text-sm text-gray-600">
+            <div class="text-sm text-gray-600 dark:text-gray-400">
               <div>{{email}} | {{phone}}</div>
               <div>{{address}}</div>
             </div>
@@ -53,12 +53,14 @@ export class CoverLetter {
 
             <p>{{introduction}}</p>
 
+            {{#if_has_skills}}
             <div>
               <p class="mb-2">My key qualifications include:</p>
-              <ul class="list-disc list-inside space-y-1 ml-4">
+              <ul class="ml-4 space-y-1 list-disc list-inside">
                 {{skillsList}}
               </ul>
             </div>
+            {{/if_has_skills}}
 
             <p>{{experience}}</p>
 
@@ -66,7 +68,7 @@ export class CoverLetter {
 
             <div class="mt-6">
               <p>Sincerely,</p>
-              <p class="font-medium mt-2">{{fullName}}</p>
+              <p class="mt-2 font-medium">{{fullName}}</p>
             </div>
           </div>
         </div>
@@ -95,7 +97,7 @@ export class CoverLetter {
           <div class="border-l-4 border-{{themeColor}}-500 pl-4">
             <h1 class="text-3xl font-bold text-{{themeColor}}-700">{{fullName}}</h1>
             <p class="text-lg text-gray-600">Applying for {{jobTitle}}</p>
-            <div class="text-sm text-gray-500 mt-2">
+            <div class="mt-2 text-sm text-gray-500">
               {{email}} | {{phone}} | {{address}}
             </div>
           </div>
@@ -107,13 +109,15 @@ export class CoverLetter {
 
           <div>
             <h3 class="text-xl font-semibold text-{{themeColor}}-700 mb-3">Why I'm Perfect for {{companyName}}</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {{#if_has_skills}}
               <div class="bg-white p-4 rounded-lg border border-{{themeColor}}-200">
                 <h4 class="font-medium text-{{themeColor}}-600 mb-2">Key Skills</h4>
                 <ul class="space-y-1 text-sm">
                   {{skillsList}}
                 </ul>
               </div>
+              {{/if_has_skills}}
               <div class="bg-white p-4 rounded-lg border border-{{themeColor}}-200">
                 <h4 class="font-medium text-{{themeColor}}-600 mb-2">Experience</h4>
                 <p class="text-sm text-gray-700">{{experience}}</p>
@@ -121,7 +125,7 @@ export class CoverLetter {
             </div>
           </div>
 
-          <div class="bg-gray-50 p-4 rounded-lg">
+          <div class="p-4 bg-gray-50 rounded-lg">
             <p class="text-gray-700">{{closing}}</p>
           </div>
 
@@ -152,11 +156,11 @@ export class CoverLetter {
       description: 'A clean, minimalist template with modern aesthetics',
       template: `
         <div class="space-y-8">
-          <div class="text-center space-y-2">
+          <div class="space-y-2 text-center">
             <h1 class="text-4xl font-light text-{{themeColor}}-800">{{fullName}}</h1>
             <div class="w-16 h-1 bg-{{themeColor}}-500 mx-auto"></div>
             <p class="text-gray-600">{{email}} • {{phone}}</p>
-            <p class="text-gray-500 text-sm">{{address}}</p>
+            <p class="text-sm text-gray-500">{{address}}</p>
           </div>
 
           <div class="text-center">
@@ -167,29 +171,31 @@ export class CoverLetter {
           <div class="space-y-6">
             <div class="border-b border-{{themeColor}}-200 pb-4">
               <h3 class="text-lg font-medium text-{{themeColor}}-700 mb-3">Introduction</h3>
-              <p class="text-gray-700 leading-relaxed">{{introduction}}</p>
+              <p class="leading-relaxed text-gray-700">{{introduction}}</p>
             </div>
 
+            {{#if_has_skills}}
             <div class="border-b border-{{themeColor}}-200 pb-4">
               <h3 class="text-lg font-medium text-{{themeColor}}-700 mb-3">Core Competencies</h3>
               <div class="flex flex-wrap gap-2">
                 {{skillsBadges}}
               </div>
             </div>
+            {{/if_has_skills}}
 
             <div class="border-b border-{{themeColor}}-200 pb-4">
               <h3 class="text-lg font-medium text-{{themeColor}}-700 mb-3">Professional Experience</h3>
-              <p class="text-gray-700 leading-relaxed">{{experience}}</p>
+              <p class="leading-relaxed text-gray-700">{{experience}}</p>
             </div>
 
             <div>
               <h3 class="text-lg font-medium text-{{themeColor}}-700 mb-3">Closing Statement</h3>
-              <p class="text-gray-700 leading-relaxed">{{closing}}</p>
+              <p class="leading-relaxed text-gray-700">{{closing}}</p>
             </div>
           </div>
 
-          <div class="text-center pt-6">
-            <p class="text-gray-500 text-sm">{{date}}</p>
+          <div class="pt-6 text-center">
+            <p class="text-sm text-gray-500">{{date}}</p>
             <p class="text-{{themeColor}}-700 font-medium mt-2">{{fullName}}</p>
           </div>
         </div>
@@ -232,16 +238,21 @@ export class CoverLetter {
     content = content.replace(/{{closing}}/g, data.closing || 'Your closing statement...');
     content = content.replace(/{{date}}/g, data.date);
 
+    // Process conditional sections for skills
+    const hasSkills = data.skills.length > 0;
+    content = content.replace(/{{#if_has_skills}}([\s\S]*?){{\/if_has_skills}}/g, (match, p1) => {
+      return hasSkills ? p1 : '';
+    });
+
     // Handle skills list
-    const skillsList = data.skills.length > 0
+    const skillsList = hasSkills
       ? data.skills.map(skill => `<li>${skill}</li>`).join('')
-      : '<li>Your skills here...</li>';
+      : '';
     content = content.replace(/{{skillsList}}/g, skillsList);
 
-    // Handle skills badges for modern template
-    const skillsBadges = data.skills.length > 0
-      ? data.skills.map(skill => `<span class="px-3 py-1 rounded-full text-sm">${skill}</span>`).join('')
-      : '<span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm">Your skills here...</span>';
+    const skillsBadges = hasSkills
+      ? data.skills.map(skill => `<span class="px-3 py-1 text-sm rounded-full">${skill}</span>`).join('')
+      : '';
     content = content.replace(/{{skillsBadges}}/g, skillsBadges);
 
     return content;

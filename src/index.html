@@ -8,6 +8,13 @@
       name="description"
       content="Create professional cover letters instantly with our easy-to-use generator"
     />
+    <meta name="theme-color" content="#0ea5e9" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0c4a6e" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="application-name" content="Cover Letter Generator" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Cover Letter Generator" />
     <base href="/" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -18,12 +25,14 @@
   </head>
   <body class="font-['Inter'] antialiased">
     <app-root>
-      <div class="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div class="text-center">
-          <div
-            class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"
-          ></div>
-          <p class="text-gray-600">Loading Cover Letter Generator...</p>
+      <div class="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-white dark:from-gray-950 dark:via-gray-900 dark:to-gray-800">
+        <div class="p-8 text-center rounded-xl border border-gray-100 shadow-md backdrop-blur-sm bg-white/80 dark:bg-gray-800/80 dark:border-gray-700">
+          <div class="relative mx-auto mb-6 w-16 h-16">
+            <div class="absolute inset-0 rounded-full border-4 border-transparent animate-spin border-t-primary-500 border-r-secondary-500"></div>
+            <div class="absolute inset-2 bg-gradient-to-br rounded-full from-primary-400 to-secondary-500 animate-pulse-slow"></div>
+            <div class="absolute inset-[30%] rounded-full bg-white dark:bg-gray-900"></div>
+          </div>
+          <p class="font-medium text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-secondary-500 to-accent-600">Loading Cover Letter Generator...</p>
         </div>
       </div>
     </app-root>

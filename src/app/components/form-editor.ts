@@ -8,14 +8,14 @@ import { CoverLetterData } from '../models/cover-letter';
   selector: 'app-form-editor',
   imports: [ReactiveFormsModule],
   template: `
-    <div class="space-y-6">
-      <h3 class="form-label text-lg font-semibold">Edit Your Information</h3>
+    <div class="space-y-6 animate-fade-in">
+      <h3 class="inline-block text-transparent bg-clip-text section-title bg-gradient-primary-to-secondary">Edit Your Information</h3>
 
-      <form [formGroup]="form" class="space-y-4">
-        <div class="space-y-4">
-          <h4 class="font-medium text-gray-900 dark:text-gray-100">Personal Information</h4>
+      <form [formGroup]="form" class="space-y-5">
+        <div class="space-y-5">
+          <h4 class="font-medium text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-400">Personal Information</h4>
 
-          <div>
+          <div class="animate-slide-in-right" style="animation-delay: 100ms">
             <label class="form-label" for="fullName">Full Name *</label>
             <input
               id="fullName"
@@ -26,13 +26,13 @@ import { CoverLetterData } from '../models/cover-letter';
               placeholder="Enter your full name"
             >
             @if(isFieldInvalid('fullName')) {
-              <div class="text-red-500 text-sm mt-1">
+              <div class="mt-1 text-sm text-red-500">
                 Full name is required
               </div>
             }
           </div>
 
-          <div>
+          <div class="animate-slide-in-right" style="animation-delay: 150ms">
             <label class="form-label" for="email">Email *</label>
             <input
               id="email"
@@ -43,14 +43,14 @@ import { CoverLetterData } from '../models/cover-letter';
               placeholder="your.email@example.com"
             >
             @if(isFieldInvalid('email')) {
-              <div class="text-red-500 text-sm mt-1">
+              <div class="mt-1 text-sm text-red-500">
                 Please enter a valid email address
               </div>
             }
           </div>
 
-          <div>
-            <label class="form-label" for="phone">Phone Number *</label>
+          <div class="animate-slide-in-right" style="animation-delay: 200ms">
+            <label class="form-label" for="phone">Phone *</label>
             <input
               id="phone"
               type="tel"
@@ -60,13 +60,13 @@ import { CoverLetterData } from '../models/cover-letter';
               placeholder="(555) 123-4567"
             >
             @if(isFieldInvalid('phone')) {
-              <div class="text-red-500 text-sm mt-1">
+              <div class="mt-1 text-sm text-red-500">
                 Phone number is required
               </div>
             }
           </div>
 
-          <div>
+          <div class="animate-slide-in-right" style="animation-delay: 250ms">
             <label class="form-label" for="address">Address</label>
             <input
               id="address"
@@ -76,99 +76,58 @@ import { CoverLetterData } from '../models/cover-letter';
               placeholder="Your address"
             >
           </div>
-        </div>
 
-        <div class="space-y-4">
-          <h4 class="font-medium text-gray-900 dark:text-gray-100">Job Information</h4>
+          <h4 class="mt-8 font-medium text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-400 animate-slide-in-right" style="animation-delay: 300ms">Job Information</h4>
 
-          <div>
-            <label class="form-label" for="jobTitle">Job Title *</label>
+          <div class="animate-slide-in-right" style="animation-delay: 350ms">
+            <label for="jobTitle" class="form-label">Job Title *</label>
             <input
-              id="jobTitle"
               type="text"
+              id="jobTitle"
               formControlName="jobTitle"
               class="form-input"
               [class.border-red-500]="isFieldInvalid('jobTitle')"
               placeholder="Position you're applying for"
-            >
+            />
             @if(isFieldInvalid('jobTitle')) {
-              <div class="text-red-500 text-sm mt-1">
+              <div class="mt-1 text-sm text-red-500">
                 Job title is required
               </div>
             }
           </div>
 
-          <div>
-            <label class="form-label" for="companyName">Company Name *</label>
+          <div class="animate-slide-in-right" style="animation-delay: 400ms">
+            <label for="companyName" class="form-label">Company Name *</label>
             <input
-              id="companyName"
               type="text"
+              id="companyName"
               formControlName="companyName"
               class="form-input"
               [class.border-red-500]="isFieldInvalid('companyName')"
               placeholder="Company you're applying to"
-            >
+            />
             @if(isFieldInvalid('companyName')) {
-              <div class="text-red-500 text-sm mt-1">
+              <div class="mt-1 text-sm text-red-500">
                 Company name is required
               </div>
             }
           </div>
 
-          <div>
-            <label class="form-label" for="hiringManager">Hiring Manager</label>
+          <div class="animate-slide-in-right" style="animation-delay: 450ms">
+            <label for="hiringManager" class="form-label">Hiring Manager</label>
             <input
-              id="hiringManager"
               type="text"
+              id="hiringManager"
               formControlName="hiringManager"
               class="form-input"
               placeholder="Mr./Ms. Last Name or 'Hiring Manager'"
-            >
-          </div>
-        </div>
-
-        <div class="space-y-4">
-          <div class="flex items-center justify-between">
-            <h4 class="font-medium text-gray-900 dark:text-gray-100">Skills</h4>
-            <button
-              type="button"
-              (click)="addSkill()"
-              class="text-primary-600 hover:text-primary-700 text-sm font-medium"
-            >
-              + Add Skill
-            </button>
+            />
           </div>
 
-          <div formArrayName="skills" class="space-y-2">
-            @for(skillControl of skillsArray.controls; track $index) {
-              <div
-                class="flex items-center space-x-2"
-              >
-                <input
-                type="text"
-                [formControlName]="$index"
-                class="form-input flex-1"
-                placeholder="Enter a skill"
-              >
-              <button
-                type="button"
-                (click)="removeSkill($index)"
-                class="text-red-500 hover:text-red-600 px-2 py-1"
-                [attr.aria-label]="'Remove skill ' + ($index + 1)"
-              >
-                ×
-              </button>
-            </div>
-            }
-          </div>
-        </div>
+          <h4 class="mt-8 font-medium text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-400 animate-slide-in-right" style="animation-delay: 500ms">Content</h4>
 
-        <!-- Content -->
-        <div class="space-y-4">
-          <h4 class="font-medium text-gray-900 dark:text-gray-100">Content</h4>
-
-          <div>
-            <label class="form-label" for="introduction">Introduction Paragraph *</label>
+          <div class="animate-slide-in-right" style="animation-delay: 550ms">
+            <label for="introduction" class="form-label">Introduction Paragraph *</label>
             <textarea
               id="introduction"
               formControlName="introduction"
@@ -178,14 +137,14 @@ import { CoverLetterData } from '../models/cover-letter';
               rows="4"
             ></textarea>
             @if(isFieldInvalid('introduction')) {
-              <div class="text-red-500 text-sm mt-1">
+              <div class="mt-1 text-sm text-red-500">
                 Introduction is required
               </div>
             }
           </div>
 
-          <div>
-            <label class="form-label" for="experience">Experience & Achievements</label>
+          <div class="animate-slide-in-right" style="animation-delay: 600ms">
+            <label for="experience" class="form-label">Experience & Achievements</label>
             <textarea
               id="experience"
               formControlName="experience"
@@ -195,8 +154,8 @@ import { CoverLetterData } from '../models/cover-letter';
             ></textarea>
           </div>
 
-          <div>
-            <label class="form-label" for="closing">Closing Statement</label>
+          <div class="animate-slide-in-right" style="animation-delay: 650ms">
+            <label for="closing" class="form-label">Closing Statement</label>
             <textarea
               id="closing"
               formControlName="closing"
@@ -205,20 +164,67 @@ import { CoverLetterData } from '../models/cover-letter';
               rows="3"
             ></textarea>
           </div>
-        </div>
 
-        <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
-          <button
-            type="button"
-            (click)="resetForm()"
-            class="btn-secondary w-full"
-          >
-            Reset to Template Default
-          </button>
+          <div class="animate-slide-in-right" style="animation-delay: 700ms">
+            <div class="flex justify-between items-center">
+              <label for="skills" class="mb-0 form-label">Skills</label>
+              <button
+                type="button"
+                class="flex items-center text-sm font-medium text-primary-600 hover:text-primary-700"
+                (click)="addSkill()"
+              >
+                <svg class="mr-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Add Skill
+              </button>
+            </div>
+            <div formArrayName="skills" class="mt-3 space-y-3">
+              @for(skillControl of skillsArray.controls; track $index) {
+                <div class="flex items-center space-x-2">
+                  <input
+                    [formControlName]="$index"
+                    class="flex-1 form-input"
+                    placeholder="Enter a skill"
+                  />
+                  <button
+                    type="button"
+                    class="p-2 text-red-500 bg-gradient-to-r from-red-50 to-red-100 rounded-lg transition-all duration-300 hover:shadow-sm dark:from-red-900/30 dark:to-red-800/30 dark:text-red-400 dark:hover:from-red-900/40 dark:hover:to-red-800/40"
+                    (click)="removeSkill($index)"
+                    aria-label="Remove skill"
+                  >
+                    <svg
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      ></path>
+                    </svg>
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-gray-200 dark:border-gray-700 animate-slide-in-right" style="animation-delay: 750ms">
+            <button
+              type="button"
+              (click)="resetForm()"
+              class="w-full btn-secondary"
+            >
+              Reset to Template Default
+            </button>
+          </div>
         </div>
       </form>
     </div>
-  `
+  `,
 })
 export class FormEditor implements OnInit, OnDestroy {
   form!: FormGroup;
