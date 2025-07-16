@@ -11,30 +11,30 @@
   body {
     @apply bg-background text-foreground;
   }
-  
+
   /* Smooth scrolling and better font rendering */
   html {
-    @apply scroll-smooth antialiased;
+    @apply antialiased scroll-smooth;
   }
 }
 
 @layer components {
   /* Button Styles */
   .btn-primary {
-    @apply bg-gradient-primary-to-secondary hover:shadow-glow text-white font-medium py-2 px-6 rounded-lg transition-all duration-300 animate-fade-in;
+    @apply px-6 py-2 font-medium text-white rounded-lg transition-all duration-300 bg-gradient-primary-to-secondary hover:shadow-glow animate-fade-in;
   }
 
   .btn-secondary {
-    @apply bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200 font-medium py-2 px-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300;
+    @apply px-6 py-2 font-medium text-gray-800 bg-white rounded-lg border border-gray-200 shadow-sm transition-all duration-300 dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200 dark:border-gray-700 hover:shadow-md;
   }
-  
+
   .btn-accent {
-    @apply bg-gradient-secondary-to-accent hover:shadow-glow-accent text-white font-medium py-2 px-6 rounded-lg transition-all duration-300;
+    @apply px-6 py-2 font-medium text-white rounded-lg transition-all duration-300 bg-gradient-secondary-to-accent hover:shadow-glow-accent;
   }
-  
+
   /* Form Controls */
   .form-input {
-    @apply w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all duration-300 shadow-sm hover:shadow;
+    @apply px-4 py-3 w-full text-gray-900 bg-white rounded-lg border border-gray-200 shadow-sm transition-all duration-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent hover:shadow;
   }
 
   .form-textarea {
@@ -42,46 +42,46 @@
   }
 
   .form-label {
-    @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2;
+    @apply block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300;
   }
-  
+
   /* Card Styles */
   .card {
-    @apply bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700 p-6 transition-all duration-300 hover:shadow-md;
+    @apply p-6 bg-white rounded-xl border border-gray-100 transition-all duration-300 dark:bg-gray-800 shadow-soft dark:border-gray-700 hover:shadow-md;
   }
-  
+
   .card-gradient {
-    @apply bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-gray-800 dark:to-gray-900 rounded-xl shadow-soft border border-gray-100 dark:border-gray-700 p-6 transition-all duration-300 hover:shadow-md;
+    @apply p-6 bg-gradient-to-br rounded-xl border border-gray-100 transition-all duration-300 from-primary-50 to-secondary-50 dark:from-gray-800 dark:to-gray-900 shadow-soft dark:border-gray-700 hover:shadow-md;
   }
-  
+
   /* Preview Container */
   .preview-container {
-    @apply bg-white text-gray-900 shadow-lg rounded-xl p-8 max-w-4xl mx-auto border border-gray-100;
+    @apply p-8 mx-auto max-w-7xl text-gray-900 bg-white rounded-xl border border-gray-100 shadow-lg;
   }
-  
+
   /* Badge Styles */
   .badge {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200;
+    @apply inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200;
   }
-  
+
   .badge-secondary {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-secondary-100 text-secondary-800 dark:bg-secondary-900 dark:text-secondary-200;
+    @apply inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-secondary-100 text-secondary-800 dark:bg-secondary-900 dark:text-secondary-200;
   }
-  
+
   .badge-accent {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-200;
+    @apply inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-200;
   }
-  
+
   /* Animated Gradient Background */
   .animated-gradient {
     @apply bg-gradient-primary-to-secondary bg-[length:200%_200%] animate-gradient;
   }
-  
+
   /* Section Styles */
   .section-title {
-    @apply text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center;
+    @apply flex items-center mb-4 text-xl font-bold text-gray-900 dark:text-white;
   }
-  
+
   .section-title::before {
     @apply content-[''] w-2 h-6 bg-gradient-primary-to-secondary rounded mr-2 inline-block;
   }
@@ -103,6 +103,6 @@
 /* Print Styles */
 @media print {
   .preview-container {
-    @apply shadow-none border-0;
+    @apply border-0 shadow-none;
   }
 }

@@ -11,9 +11,9 @@
 
   <app-header />
 
-  <main class="relative z-10 px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
-      <div class="space-y-8 animate-fade-in">
+  <main class="relative z-10 px-4 py-8 mx-auto sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-6">
+      <div class="space-y-8 animate-fade-in lg:col-span-2">
         <div class="border border-gray-100 backdrop-blur-sm transition-all duration-300 card bg-white/90 dark:bg-gray-800/90 animate-slide-in-up shadow-soft hover:shadow-md dark:border-gray-700">
           <app-template-selector />
         </div>
@@ -23,7 +23,7 @@
         </div>
       </div>
 
-      <div class="lg:sticky lg:top-8 lg:self-start animate-fade-in" style="animation-delay: 300ms">
+      <div class="lg:sticky lg:top-8 lg:self-start animate-fade-in lg:col-span-4" style="animation-delay: 300ms">
         <div class="border border-gray-100 backdrop-blur-sm transition-all duration-300 card bg-white/90 dark:bg-gray-800/90 shadow-soft hover:shadow-md dark:border-gray-700">
           <app-preview />
         </div>

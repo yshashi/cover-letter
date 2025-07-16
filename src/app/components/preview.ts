@@ -23,7 +23,7 @@ import { CoverLetter } from '../services/cover-letter';
       </div>
 
       <div
-        class="bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 min-h-[600px] shadow-sm hover:shadow-md transition-all duration-300 animate-slide-in-up"
+        class="bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 min-h-[600px] shadow-sm hover:shadow-md transition-all duration-300 animate-slide-in-up"
       >
         <div
           #previewContainer
@@ -90,7 +90,7 @@ export class PreviewComponent {
 
       const opt = {
         margin: [0.75, 0.75, 0.75, 0.75],
-        filename: 'cover-letter.pdf',
+        filename: `${this.coverLetter.formData()?.fullName}_coverletter.pdf`,
         image: { type: 'jpeg', quality: 1.0 },
         html2canvas: {
           scale: 2,
