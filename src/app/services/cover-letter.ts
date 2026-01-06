@@ -1,10 +1,13 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, effect, inject } from '@angular/core';
 import { CoverLetterData, CoverLetterTemplate } from '../models/cover-letter';
+import { StorageService } from './storage';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CoverLetter {
+  private storage = inject(StorageService);
+
   #selectedTemplate = signal<CoverLetterTemplate | null>(null);
   #formData = signal<CoverLetterData>({
     fullName: '',
@@ -18,11 +21,43 @@ export class CoverLetter {
     skills: [],
     experience: '',
     closing: '',
-    date: new Date().toLocaleDateString()
+    date: new Date().toLocaleDateString(),
   });
 
   selectedTemplate = this.#selectedTemplate.asReadonly();
   formData = this.#formData.asReadonly();
+
+  private isInitialized = false;
+
+  constructor() {
+    this.loadAutoSavedData();
+    this.isInitialized = true;
+
+    effect(() => {
+      if (this.isInitialized) {
+        const data = this.#formData();
+        const templateId = this.#selectedTemplate()?.id;
+        this.storage.autoSave(data, templateId);
+      }
+    });
+  }
+
+  private loadAutoSavedData(): void {
+    const autoSaved = this.storage.getAutoSave();
+    if (autoSaved) {
+      this.#formData.set(autoSaved.data);
+
+      // Restore the selected template if saved
+      if (autoSaved.templateId) {
+        const template = this.templates.find(
+          (t) => t.id === autoSaved.templateId
+        );
+        if (template) {
+          this.#selectedTemplate.set(template);
+        }
+      }
+    }
+  }
 
   private templates: CoverLetterTemplate[] = [
     {
@@ -39,7 +74,7 @@ export class CoverLetter {
             <h1 class="text-2xl font-bold text-{{themeColor}}-700">{{fullName}}</h1>
             <div class="text-sm text-gray-600 dark:text-gray-400">
               <div>{{email}} | {{phone}}</div>
-              <div>{{address}}</div>
+              {{#if_has_address}}<div>{{address}}</div>{{/if_has_address}}
             </div>
           </div>
 
@@ -62,9 +97,9 @@ export class CoverLetter {
             </div>
             {{/if_has_skills}}
 
-            <p>{{experience}}</p>
+            {{#if_has_experience}}<p>{{experience}}</p>{{/if_has_experience}}
 
-            <p>{{closing}}</p>
+            {{#if_has_closing}}<p>{{closing}}</p>{{/if_has_closing}}
 
             <div class="mt-6">
               <p>Sincerely,</p>
@@ -81,12 +116,21 @@ export class CoverLetter {
         jobTitle: 'Software Developer',
         companyName: 'Tech Solutions Inc.',
         hiringManager: 'Ms. Sarah Johnson',
-        introduction: 'I am writing to express my strong interest in the Software Developer position at Tech Solutions Inc. With over 3 years of experience in full-stack development, I am excited about the opportunity to contribute to your innovative team.',
-        skills: ['JavaScript & TypeScript', 'React & Angular', 'Node.js & Express', 'Database Management', 'Agile Development'],
-        experience: 'In my current role at Digital Innovations, I have successfully led the development of multiple web applications, resulting in a 40% increase in user engagement. My expertise in modern frameworks and commitment to clean, maintainable code make me an ideal candidate for this position.',
-        closing: 'I am eager to discuss how my skills and passion for technology can contribute to Tech Solutions Inc.\'s continued success. Thank you for considering my application.',
-        date: new Date().toLocaleDateString()
-      }
+        introduction:
+          'I am writing to express my strong interest in the Software Developer position at Tech Solutions Inc. With over 3 years of experience in full-stack development, I am excited about the opportunity to contribute to your innovative team.',
+        skills: [
+          'JavaScript & TypeScript',
+          'React & Angular',
+          'Node.js & Express',
+          'Database Management',
+          'Agile Development',
+        ],
+        experience:
+          'In my current role at Digital Innovations, I have successfully led the development of multiple web applications, resulting in a 40% increase in user engagement. My expertise in modern frameworks and commitment to clean, maintainable code make me an ideal candidate for this position.',
+        closing:
+          "I am eager to discuss how my skills and passion for technology can contribute to Tech Solutions Inc.'s continued success. Thank you for considering my application.",
+        date: new Date().toLocaleDateString(),
+      },
     },
     {
       id: 'creative',
@@ -98,7 +142,7 @@ export class CoverLetter {
             <h1 class="text-3xl font-bold text-{{themeColor}}-700">{{fullName}}</h1>
             <p class="text-lg text-gray-600 dark:text-gray-400">Applying for {{jobTitle}}</p>
             <div class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              {{email}} | {{phone}} | {{address}}
+              {{email}} | {{phone}}{{#if_has_address}} | {{address}}{{/if_has_address}}
             </div>
           </div>
 
@@ -107,7 +151,7 @@ export class CoverLetter {
             <p class="text-gray-700 dark:text-gray-400">{{introduction}}</p>
           </div>
 
-          <div>
+          <div class="p-4">
             <h3 class="text-xl font-semibold text-{{themeColor}}-700 mb-3">Why I'm Perfect for {{companyName}}</h3>
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
               {{#if_has_skills}}
@@ -118,16 +162,20 @@ export class CoverLetter {
                 </ul>
               </div>
               {{/if_has_skills}}
+              {{#if_has_experience}}
               <div class="bg-white dark:bg-gray-800 p-4 rounded-lg border border-{{themeColor}}-200">
                 <h4 class="font-medium text-{{themeColor}}-600 mb-2">Experience</h4>
                 <p class="text-sm text-gray-700 dark:text-gray-400">{{experience}}</p>
               </div>
+              {{/if_has_experience}}
             </div>
           </div>
 
+          {{#if_has_closing}}
           <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
             <p class="text-gray-700 dark:text-gray-400">{{closing}}</p>
           </div>
+          {{/if_has_closing}}
 
           <div class="text-right">
             <p class="text-sm text-gray-500">{{date}}</p>
@@ -143,12 +191,21 @@ export class CoverLetter {
         jobTitle: 'UX Designer',
         companyName: 'Creative Studios',
         hiringManager: 'Mr. Alex Chen',
-        introduction: 'As a passionate UX Designer with 4 years of experience creating user-centered digital experiences, I am thrilled to apply for the UX Designer position at Creative Studios. Your company\'s commitment to innovative design solutions aligns perfectly with my creative vision.',
-        skills: ['User Research & Testing', 'Wireframing & Prototyping', 'Figma & Sketch', 'Design Systems', 'Accessibility Design'],
-        experience: 'At Innovation Labs, I redesigned the mobile app interface, leading to a 60% increase in user satisfaction scores. My collaborative approach and attention to detail have consistently delivered exceptional results.',
-        closing: 'I would love to bring my creativity and user-focused approach to Creative Studios. Thank you for your time and consideration.',
-        date: new Date().toLocaleDateString()
-      }
+        introduction:
+          "As a passionate UX Designer with 4 years of experience creating user-centered digital experiences, I am thrilled to apply for the UX Designer position at Creative Studios. Your company's commitment to innovative design solutions aligns perfectly with my creative vision.",
+        skills: [
+          'User Research & Testing',
+          'Wireframing & Prototyping',
+          'Figma & Sketch',
+          'Design Systems',
+          'Accessibility Design',
+        ],
+        experience:
+          'At Innovation Labs, I redesigned the mobile app interface, leading to a 60% increase in user satisfaction scores. My collaborative approach and attention to detail have consistently delivered exceptional results.',
+        closing:
+          'I would love to bring my creativity and user-focused approach to Creative Studios. Thank you for your time and consideration.',
+        date: new Date().toLocaleDateString(),
+      },
     },
     {
       id: 'modern',
@@ -160,7 +217,7 @@ export class CoverLetter {
             <h1 class="text-4xl font-light text-{{themeColor}}-800">{{fullName}}</h1>
             <div class="w-16 h-1 bg-{{themeColor}}-500 mx-auto"></div>
             <p class="text-gray-600 dark:text-gray-400">{{email}} • {{phone}}</p>
-            <p class="text-sm text-gray-500 dark:text-gray-400">{{address}}</p>
+            {{#if_has_address}}<p class="text-sm text-gray-500 dark:text-gray-400">{{address}}</p>{{/if_has_address}}
           </div>
 
           <div class="text-center dark:text-gray-200">
@@ -183,15 +240,19 @@ export class CoverLetter {
             </div>
             {{/if_has_skills}}
 
+            {{#if_has_experience}}
             <div class="border-b border-{{themeColor}}-200 pb-4">
               <h3 class="text-lg font-medium text-{{themeColor}}-700 mb-3">Professional Experience</h3>
               <p class="leading-relaxed text-gray-700 dark:text-gray-400">{{experience}}</p>
             </div>
+            {{/if_has_experience}}
 
+            {{#if_has_closing}}
             <div>
               <h3 class="text-lg font-medium text-{{themeColor}}-700 mb-3">Closing Statement</h3>
               <p class="leading-relaxed text-gray-700 dark:text-gray-400">{{closing}}</p>
             </div>
+            {{/if_has_closing}}
           </div>
 
           <div class="pt-6 text-center dark:text-gray-200">
@@ -208,13 +269,22 @@ export class CoverLetter {
         jobTitle: 'Product Manager',
         companyName: 'Future Tech Corp',
         hiringManager: 'Dr. Lisa Wang',
-        introduction: 'I am excited to apply for the Product Manager position at Future Tech Corp. With 5 years of experience in product development and a proven track record of launching successful digital products, I am confident in my ability to drive innovation and growth for your organization.',
-        skills: ['Product Strategy', 'Agile & Scrum', 'Market Research', 'Data Analysis', 'Cross-functional Leadership'],
-        experience: 'In my role as Senior Product Analyst at StartUp Solutions, I led the development of three major product features that increased user retention by 35% and generated $2M in additional revenue. My analytical approach and collaborative leadership style have consistently delivered exceptional results.',
-        closing: 'I am passionate about creating products that solve real problems and would welcome the opportunity to discuss how my experience can contribute to Future Tech Corp\'s mission. Thank you for your consideration.',
-        date: new Date().toLocaleDateString()
-      }
-    }
+        introduction:
+          'I am excited to apply for the Product Manager position at Future Tech Corp. With 5 years of experience in product development and a proven track record of launching successful digital products, I am confident in my ability to drive innovation and growth for your organization.',
+        skills: [
+          'Product Strategy',
+          'Agile & Scrum',
+          'Market Research',
+          'Data Analysis',
+          'Cross-functional Leadership',
+        ],
+        experience:
+          'In my role as Senior Product Analyst at StartUp Solutions, I led the development of three major product features that increased user retention by 35% and generated $2M in additional revenue. My analytical approach and collaborative leadership style have consistently delivered exceptional results.',
+        closing:
+          "I am passionate about creating products that solve real problems and would welcome the opportunity to discuss how my experience can contribute to Future Tech Corp's mission. Thank you for your consideration.",
+        date: new Date().toLocaleDateString(),
+      },
+    },
   ];
 
   compiledContent = computed(() => {
@@ -227,31 +297,85 @@ export class CoverLetter {
 
     // Replace placeholders
     content = content.replace(/{{fullName}}/g, data.fullName || 'Your Name');
-    content = content.replace(/{{email}}/g, data.email || 'your.email@example.com');
+    content = content.replace(
+      /{{email}}/g,
+      data.email || 'your.email@example.com'
+    );
     content = content.replace(/{{phone}}/g, data.phone || '(555) 123-4567');
     content = content.replace(/{{address}}/g, data.address || 'Your Address');
-    content = content.replace(/{{jobTitle}}/g, data.jobTitle || 'Position Title');
-    content = content.replace(/{{companyName}}/g, data.companyName || 'Company Name');
-    content = content.replace(/{{hiringManager}}/g, data.hiringManager || 'Hiring Manager');
-    content = content.replace(/{{introduction}}/g, data.introduction || 'Your introduction paragraph...');
-    content = content.replace(/{{experience}}/g, data.experience || 'Your experience details...');
-    content = content.replace(/{{closing}}/g, data.closing || 'Your closing statement...');
+    content = content.replace(
+      /{{jobTitle}}/g,
+      data.jobTitle || 'Position Title'
+    );
+    content = content.replace(
+      /{{companyName}}/g,
+      data.companyName || 'Company Name'
+    );
+    content = content.replace(
+      /{{hiringManager}}/g,
+      data.hiringManager || 'Hiring Manager'
+    );
+    content = content.replace(
+      /{{introduction}}/g,
+      data.introduction || 'Your introduction paragraph...'
+    );
+    content = content.replace(
+      /{{experience}}/g,
+      data.experience || 'Your experience details...'
+    );
+    content = content.replace(
+      /{{closing}}/g,
+      data.closing || 'Your closing statement...'
+    );
     content = content.replace(/{{date}}/g, data.date);
 
-    // Process conditional sections for skills
+    // Process conditional sections
     const hasSkills = data.skills.length > 0;
-    content = content.replace(/{{#if_has_skills}}([\s\S]*?){{\/if_has_skills}}/g, (match, p1) => {
-      return hasSkills ? p1 : '';
-    });
+    const hasAddress = data.address && data.address.trim() !== '';
+    const hasExperience = data.experience && data.experience.trim() !== '';
+    const hasClosing = data.closing && data.closing.trim() !== '';
+
+    content = content.replace(
+      /{{#if_has_skills}}([\s\S]*?){{\/if_has_skills}}/g,
+      (match, p1) => {
+        return hasSkills ? p1 : '';
+      }
+    );
+
+    content = content.replace(
+      /{{#if_has_address}}([\s\S]*?){{\/if_has_address}}/g,
+      (match, p1) => {
+        return hasAddress ? p1 : '';
+      }
+    );
+
+    content = content.replace(
+      /{{#if_has_experience}}([\s\S]*?){{\/if_has_experience}}/g,
+      (match, p1) => {
+        return hasExperience ? p1 : '';
+      }
+    );
+
+    content = content.replace(
+      /{{#if_has_closing}}([\s\S]*?){{\/if_has_closing}}/g,
+      (match, p1) => {
+        return hasClosing ? p1 : '';
+      }
+    );
 
     // Handle skills list
     const skillsList = hasSkills
-      ? data.skills.map(skill => `<li>${skill}</li>`).join('')
+      ? data.skills.map((skill) => `<li>${skill}</li>`).join('')
       : '';
     content = content.replace(/{{skillsList}}/g, skillsList);
 
     const skillsBadges = hasSkills
-      ? data.skills.map(skill => `<span class="px-3 py-1 text-sm rounded-full">${skill}</span>`).join('')
+      ? data.skills
+          .map(
+            (skill) =>
+              `<span class="px-3 py-1 text-sm rounded-full">${skill}</span>`
+          )
+          .join('')
       : '';
     content = content.replace(/{{skillsBadges}}/g, skillsBadges);
 
@@ -263,7 +387,7 @@ export class CoverLetter {
   }
 
   selectTemplate(templateId: string): void {
-    const template = this.templates.find(t => t.id === templateId);
+    const template = this.templates.find((t) => t.id === templateId);
     if (template) {
       this.#selectedTemplate.set(template);
       this.#formData.set({ ...template.sampleData });
@@ -271,11 +395,40 @@ export class CoverLetter {
   }
 
   updateFormData(data: Partial<CoverLetterData>): void {
-    this.#formData.update(current => ({ ...current, ...data }));
+    this.#formData.update((current) => ({ ...current, ...data }));
   }
 
   updateSkills(skills: string[]): void {
-    this.#formData.update(current => ({ ...current, skills }));
+    this.#formData.update((current) => ({ ...current, skills }));
   }
 
+  saveCurrentProfile(name: string): void {
+    const data = this.#formData();
+    const profile = this.storage.saveProfile(name, data);
+    this.storage.setCurrentProfile(profile.id);
+  }
+
+  loadProfile(id: string): void {
+    const profile = this.storage.getProfile(id);
+    if (profile) {
+      this.#formData.set(profile.data);
+      this.storage.setCurrentProfile(id);
+    }
+  }
+
+  deleteProfile(id: string): void {
+    this.storage.deleteProfile(id);
+  }
+
+  getAllProfiles() {
+    return this.storage.getAllProfiles();
+  }
+
+  getCurrentProfileId(): string | null {
+    return this.storage.getCurrentProfileId();
+  }
+
+  clearAutoSave(): void {
+    this.storage.clearAutoSave();
+  }
 }

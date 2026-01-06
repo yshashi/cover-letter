@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-white transition-all duration-500 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800">
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-white dark:from-gray-950 dark:via-gray-900 dark:to-gray-800">
   <div class="overflow-hidden fixed inset-0 z-0 pointer-events-none">
     <div class="absolute top-0 left-0 w-full h-full opacity-30 dark:opacity-15">
       <div class="absolute left-10 top-20 w-64 h-64 bg-gradient-to-r rounded-full filter blur-3xl from-primary-300 to-primary-100 dark:from-primary-900 dark:to-primary-700 animate-float"></div>
@@ -10,21 +10,26 @@
   </div>
 
   <app-header />
+  <app-notification />
 
   <main class="relative z-10 px-4 py-8 mx-auto sm:px-6 lg:px-8">
     <div class="grid grid-cols-1 gap-8 lg:grid-cols-6">
       <div class="space-y-8 animate-fade-in lg:col-span-2">
-        <div class="border border-gray-100 backdrop-blur-sm transition-all duration-300 card bg-white/90 dark:bg-gray-800/90 animate-slide-in-up shadow-soft hover:shadow-md dark:border-gray-700">
+        <div class="bg-white border border-gray-100 transition-shadow duration-300 card dark:bg-gray-800 shadow-soft hover:shadow-md dark:border-gray-700">
+          <app-profile-manager />
+        </div>
+
+        <div class="bg-white border border-gray-100 transition-shadow duration-300 card dark:bg-gray-800 shadow-soft hover:shadow-md dark:border-gray-700">
           <app-template-selector />
         </div>
 
-        <div class="border border-gray-100 backdrop-blur-sm transition-all duration-300 card bg-white/90 dark:bg-gray-800/90 animate-slide-in-up shadow-soft hover:shadow-md dark:border-gray-700" style="animation-delay: 150ms">
+        <div class="bg-white border border-gray-100 transition-shadow duration-300 card dark:bg-gray-800 shadow-soft hover:shadow-md dark:border-gray-700">
           <app-form-editor />
         </div>
       </div>
 
-      <div class="lg:sticky lg:top-8 lg:self-start animate-fade-in lg:col-span-4" style="animation-delay: 300ms">
-        <div class="border border-gray-100 backdrop-blur-sm transition-all duration-300 card bg-white/90 dark:bg-gray-800/90 shadow-soft hover:shadow-md dark:border-gray-700">
+      <div class="lg:sticky lg:top-8 lg:self-start animate-fade-in lg:col-span-4" style="animation-delay: 300ms; will-change: transform;">
+        <div class="bg-white border border-gray-100 transition-shadow duration-300 card dark:bg-gray-800 shadow-soft hover:shadow-md dark:border-gray-700">
           <app-preview />
         </div>
       </div>

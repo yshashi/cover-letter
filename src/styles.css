@@ -16,6 +16,22 @@
   html {
     @apply antialiased scroll-smooth;
   }
+
+  /* Performance optimizations for sticky elements */
+  .sticky {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+
+  /* Optimize animations for better performance */
+  @media (prefers-reduced-motion: no-preference) {
+    * {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  }
 }
 
 @layer components {
@@ -98,6 +114,41 @@
 
 .delay-300 {
   animation-delay: 300ms;
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full dark:bg-gray-600;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-500;
+}
+
+/* Focus Styles */
+*:focus-visible {
+  @apply ring-2 ring-offset-2 outline-none ring-primary-400 dark:ring-offset-gray-900;
+}
+
+/* Disabled Styles */
+button:disabled,
+input:disabled,
+textarea:disabled {
+  @apply cursor-not-allowed;
+}
+
+/* Selection Styles */
+::selection {
+  @apply bg-primary-200 text-primary-900 dark:bg-primary-800 dark:text-primary-100;
 }
 
 /* Print Styles */
