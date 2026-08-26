@@ -19,11 +19,7 @@ import { NotificationService } from '../services/notification';
   template: `
     <div class="space-y-4 animate-fade-in">
       <div class="flex justify-between items-center flex-wrap gap-3">
-        <h3
-          class="inline-block text-transparent bg-clip-text section-title bg-gradient-primary-to-secondary"
-        >
-          Live Preview
-        </h3>
+        <h3 class="section-title">Live Preview</h3>
         <div class="flex items-center gap-2">
           <button
             (click)="copyToClipboard()"
@@ -89,22 +85,19 @@ import { NotificationService } from '../services/notification';
       </div>
 
       <div
-        class="bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 min-h-[600px] shadow-sm hover:shadow-md transition-all duration-300 animate-slide-in-up"
+        class="bg-white dark:bg-stone-900 rounded-xl border border-stone-200 dark:border-stone-700 min-h-[600px] shadow-sm hover:shadow-md transition-all duration-300"
       >
         <div
           #previewContainer
-          class="p-4 bg-white rounded-lg shadow-inner preview-container dark:bg-gray-800 dark:text-gray-100"
+          class="p-4 bg-white rounded-lg shadow-inner preview-container dark:bg-stone-800 dark:text-stone-100"
           [innerHTML]="sanitizedContent()"
         ></div>
       </div>
 
-      <div
-        class="mt-2 text-xs text-center text-gray-500 dark:text-gray-400 animate-fade-in"
-        style="animation-delay: 300ms"
-      >
+      <div class="mt-2 text-xs text-center text-stone-500 dark:text-stone-400">
         <div class="inline-flex items-center">
           <svg
-            class="mr-1 w-4 h-4 text-primary-500"
+            class="mr-1 w-4 h-4 text-accent-600"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

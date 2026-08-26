@@ -10,6 +10,7 @@ import { FormEditor } from './components/form-editor';
 import { PreviewComponent } from './components/preview';
 import { NotificationComponent } from './components/notification';
 import { ProfileManagerComponent } from './components/profile-manager';
+import { PersonalInfoEditor } from './components/personal-info-editor';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,7 @@ import { ProfileManagerComponent } from './components/profile-manager';
     PreviewComponent,
     NotificationComponent,
     ProfileManagerComponent,
+    PersonalInfoEditor,
   ],
   templateUrl: './app.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,6 +30,7 @@ import { ProfileManagerComponent } from './components/profile-manager';
 export class App implements OnInit {
   protected readonly title = signal('cover-letter');
   protected readonly isReady = signal(false);
+  protected readonly mobileView = signal<'edit' | 'preview'>('edit');
 
   ngOnInit(): void {
     // Small delay to ensure services are initialized before rendering

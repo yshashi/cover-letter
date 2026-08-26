@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { CoverLetterData } from '../models/cover-letter';
+import { JobLetterData, PersonalInfo } from '../models/cover-letter';
 
 export interface SavedProfile {
   id: string;
   name: string;
-  data: CoverLetterData;
+  data: JobLetterData;
   createdAt: string;
   updatedAt: string;
 }
@@ -16,8 +16,9 @@ export class StorageService {
   private readonly STORAGE_KEY = 'lp_coverletter_profiles';
   private readonly CURRENT_PROFILE_KEY = 'lp_coverletter_current_profile';
   private readonly AUTO_SAVE_KEY = 'lp_coverletter_autosave';
+  private readonly PERSONAL_INFO_KEY = 'lp_coverletter_personal_info';
 
-  saveProfile(name: string, data: CoverLetterData): SavedProfile {
+  saveProfile(name: string, data: JobLetterData): SavedProfile {
     const profiles = this.getAllProfiles();
     const existingProfile = profiles.find((p) => p.name === name);
 
@@ -76,7 +77,7 @@ export class StorageService {
     localStorage.removeItem(this.CURRENT_PROFILE_KEY);
   }
 
-  autoSave(data: CoverLetterData, templateId?: string): void {
+  autoSave(data: JobLetterData, templateId?: string): void {
     try {
       const saveData = {
         data,
@@ -89,7 +90,7 @@ export class StorageService {
     }
   }
 
-  getAutoSave(): { data: CoverLetterData; templateId?: string } | null {
+  getAutoSave(): { data: JobLetterData; templateId?: string } | null {
     try {
       const stored = localStorage.getItem(this.AUTO_SAVE_KEY);
       if (!stored) return null;
@@ -110,6 +111,51 @@ export class StorageService {
 
   clearAutoSave(): void {
     localStorage.removeItem(this.AUTO_SAVE_KEY);
+  }
+
+  savePersonalInfo(data: PersonalInfo): void {
+    try {
+      localStorage.setItem(this.PERSONAL_INFO_KEY, JSON.stringify(data));
+    } catch (error) {
+      console.error('Error saving personal info:', error);
+    }
+  }
+
+  getPersonalInfo(): PersonalInfo | null {
+    try {
+      const stored = localStorage.getItem(this.PERSONAL_INFO_KEY);
+      return stored ? JSON.parse(stored) : null;
+    } catch (error) {
+      console.error('Error loading personal info:', error);
+      return null;
+    }
+  }
+
+  // One-time migration path: older versions stored personal fields inside the job autosave blob.
+  getLegacyPersonalInfoFromAutoSave(): PersonalInfo | null {
+    try {
+      const stored = localStorage.getItem(this.AUTO_SAVE_KEY);
+      if (!stored) return null;
+
+      const data = (JSON.parse(stored)?.data ?? {}) as Record<string, unknown>;
+      if (typeof data['fullName'] !== 'string' || !data['fullName'])
+        return null;
+
+      return {
+        fullName: data['fullName'] as string,
+        email:
+          typeof data['email'] === 'string' ? (data['email'] as string) : '',
+        phone:
+          typeof data['phone'] === 'string' ? (data['phone'] as string) : '',
+        address:
+          typeof data['address'] === 'string'
+            ? (data['address'] as string)
+            : '',
+      };
+    } catch (error) {
+      console.error('Error migrating legacy personal info:', error);
+      return null;
+    }
   }
 
   private saveAllProfiles(profiles: SavedProfile[]): void {

@@ -1,19 +1,21 @@
 import { Injectable, signal, computed, effect, inject } from '@angular/core';
-import { CoverLetterData, CoverLetterTemplate } from '../models/cover-letter';
+import {
+  CoverLetterData,
+  CoverLetterTemplate,
+  JobLetterData,
+} from '../models/cover-letter';
 import { StorageService } from './storage';
+import { PersonalInfoService } from './personal-info';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CoverLetter {
   private storage = inject(StorageService);
+  private personalInfo = inject(PersonalInfoService);
 
   #selectedTemplate = signal<CoverLetterTemplate | null>(null);
-  #formData = signal<CoverLetterData>({
-    fullName: '',
-    email: '',
-    phone: '',
-    address: '',
+  #jobData = signal<JobLetterData>({
     jobTitle: '',
     companyName: '',
     hiringManager: '',
@@ -25,7 +27,13 @@ export class CoverLetter {
   });
 
   selectedTemplate = this.#selectedTemplate.asReadonly();
-  formData = this.#formData.asReadonly();
+  jobData = this.#jobData.asReadonly();
+
+  // Personal info is a single global value; job info is per-letter. This merged view feeds compiledContent.
+  formData = computed<CoverLetterData>(() => ({
+    ...this.personalInfo.data(),
+    ...this.#jobData(),
+  }));
 
   private isInitialized = false;
 
@@ -35,7 +43,7 @@ export class CoverLetter {
 
     effect(() => {
       if (this.isInitialized) {
-        const data = this.#formData();
+        const data = this.#jobData();
         const templateId = this.#selectedTemplate()?.id;
         this.storage.autoSave(data, templateId);
       }
@@ -45,12 +53,12 @@ export class CoverLetter {
   private loadAutoSavedData(): void {
     const autoSaved = this.storage.getAutoSave();
     if (autoSaved) {
-      this.#formData.set(autoSaved.data);
+      this.#jobData.set(autoSaved.data);
 
       // Restore the selected template if saved
       if (autoSaved.templateId) {
         const template = this.templates.find(
-          (t) => t.id === autoSaved.templateId
+          (t) => t.id === autoSaved.templateId,
         );
         if (template) {
           this.#selectedTemplate.set(template);
@@ -109,10 +117,6 @@ export class CoverLetter {
         </div>
       `,
       sampleData: {
-        fullName: 'John Smith',
-        email: 'john.smith@email.com',
-        phone: '(555) 123-4567',
-        address: '123 Main Street, City, State 12345',
         jobTitle: 'Software Developer',
         companyName: 'Tech Solutions Inc.',
         hiringManager: 'Ms. Sarah Johnson',
@@ -184,10 +188,6 @@ export class CoverLetter {
         </div>
       `,
       sampleData: {
-        fullName: 'Emma Davis',
-        email: 'emma.davis@email.com',
-        phone: '(555) 987-6543',
-        address: '456 Creative Ave, Design City, DC 67890',
         jobTitle: 'UX Designer',
         companyName: 'Creative Studios',
         hiringManager: 'Mr. Alex Chen',
@@ -262,10 +262,6 @@ export class CoverLetter {
         </div>
       `,
       sampleData: {
-        fullName: 'Michael Johnson',
-        email: 'michael.johnson@email.com',
-        phone: '(555) 456-7890',
-        address: '789 Modern Blvd, Tech City, TC 13579',
         jobTitle: 'Product Manager',
         companyName: 'Future Tech Corp',
         hiringManager: 'Dr. Lisa Wang',
@@ -289,43 +285,44 @@ export class CoverLetter {
 
   compiledContent = computed(() => {
     const template = this.#selectedTemplate();
-    const data = this.#formData();
+    const data = this.formData();
 
     if (!template || !data) return '';
 
     let content = template.template;
 
     // Replace placeholders
+    content = content.replace(/{{themeColor}}/g, 'accent');
     content = content.replace(/{{fullName}}/g, data.fullName || 'Your Name');
     content = content.replace(
       /{{email}}/g,
-      data.email || 'your.email@example.com'
+      data.email || 'your.email@example.com',
     );
     content = content.replace(/{{phone}}/g, data.phone || '(555) 123-4567');
     content = content.replace(/{{address}}/g, data.address || 'Your Address');
     content = content.replace(
       /{{jobTitle}}/g,
-      data.jobTitle || 'Position Title'
+      data.jobTitle || 'Position Title',
     );
     content = content.replace(
       /{{companyName}}/g,
-      data.companyName || 'Company Name'
+      data.companyName || 'Company Name',
     );
     content = content.replace(
       /{{hiringManager}}/g,
-      data.hiringManager || 'Hiring Manager'
+      data.hiringManager || 'Hiring Manager',
     );
     content = content.replace(
       /{{introduction}}/g,
-      data.introduction || 'Your introduction paragraph...'
+      data.introduction || 'Your introduction paragraph...',
     );
     content = content.replace(
       /{{experience}}/g,
-      data.experience || 'Your experience details...'
+      data.experience || 'Your experience details...',
     );
     content = content.replace(
       /{{closing}}/g,
-      data.closing || 'Your closing statement...'
+      data.closing || 'Your closing statement...',
     );
     content = content.replace(/{{date}}/g, data.date);
 
@@ -339,28 +336,28 @@ export class CoverLetter {
       /{{#if_has_skills}}([\s\S]*?){{\/if_has_skills}}/g,
       (match, p1) => {
         return hasSkills ? p1 : '';
-      }
+      },
     );
 
     content = content.replace(
       /{{#if_has_address}}([\s\S]*?){{\/if_has_address}}/g,
       (match, p1) => {
         return hasAddress ? p1 : '';
-      }
+      },
     );
 
     content = content.replace(
       /{{#if_has_experience}}([\s\S]*?){{\/if_has_experience}}/g,
       (match, p1) => {
         return hasExperience ? p1 : '';
-      }
+      },
     );
 
     content = content.replace(
       /{{#if_has_closing}}([\s\S]*?){{\/if_has_closing}}/g,
       (match, p1) => {
         return hasClosing ? p1 : '';
-      }
+      },
     );
 
     // Handle skills list
@@ -373,7 +370,7 @@ export class CoverLetter {
       ? data.skills
           .map(
             (skill) =>
-              `<span class="px-3 py-1 text-sm rounded-full">${skill}</span>`
+              `<span class="px-3 py-1 text-sm rounded-full bg-accent-100 text-accent-800">${skill}</span>`,
           )
           .join('')
       : '';
@@ -390,20 +387,20 @@ export class CoverLetter {
     const template = this.templates.find((t) => t.id === templateId);
     if (template) {
       this.#selectedTemplate.set(template);
-      this.#formData.set({ ...template.sampleData });
+      this.#jobData.set({ ...template.sampleData });
     }
   }
 
-  updateFormData(data: Partial<CoverLetterData>): void {
-    this.#formData.update((current) => ({ ...current, ...data }));
+  updateJobData(data: Partial<JobLetterData>): void {
+    this.#jobData.update((current) => ({ ...current, ...data }));
   }
 
   updateSkills(skills: string[]): void {
-    this.#formData.update((current) => ({ ...current, skills }));
+    this.#jobData.update((current) => ({ ...current, skills }));
   }
 
   saveCurrentProfile(name: string): void {
-    const data = this.#formData();
+    const data = this.#jobData();
     const profile = this.storage.saveProfile(name, data);
     this.storage.setCurrentProfile(profile.id);
   }
@@ -411,7 +408,7 @@ export class CoverLetter {
   loadProfile(id: string): void {
     const profile = this.storage.getProfile(id);
     if (profile) {
-      this.#formData.set(profile.data);
+      this.#jobData.set(profile.data);
       this.storage.setCurrentProfile(id);
     }
   }

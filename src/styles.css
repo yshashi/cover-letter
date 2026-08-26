@@ -37,69 +37,48 @@
 @layer components {
   /* Button Styles */
   .btn-primary {
-    @apply px-6 py-2 font-medium text-white rounded-lg transition-all duration-300 bg-gradient-primary-to-secondary hover:shadow-glow animate-fade-in;
+    @apply px-6 py-2 font-medium text-white rounded-lg transition-all duration-300 bg-accent-600 hover:bg-accent-700 shadow-sm hover:shadow-md;
   }
 
   .btn-secondary {
-    @apply px-6 py-2 font-medium text-gray-800 bg-white rounded-lg border border-gray-200 shadow-sm transition-all duration-300 dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 dark:text-gray-200 dark:border-gray-700 hover:shadow-md;
-  }
-
-  .btn-accent {
-    @apply px-6 py-2 font-medium text-white rounded-lg transition-all duration-300 bg-gradient-secondary-to-accent hover:shadow-glow-accent;
+    @apply px-6 py-2 font-medium text-stone-800 bg-white rounded-lg border border-stone-200 shadow-sm transition-all duration-300 dark:bg-stone-800 hover:bg-stone-50 dark:hover:bg-stone-700 dark:text-stone-200 dark:border-stone-700 hover:shadow-md;
   }
 
   /* Form Controls */
   .form-input {
-    @apply px-4 py-3 w-full text-gray-900 bg-white rounded-lg border border-gray-200 shadow-sm transition-all duration-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent hover:shadow;
+    @apply px-4 py-3 w-full text-stone-900 bg-white rounded-lg border border-stone-200 shadow-sm transition-all duration-300 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-accent-400 focus:border-transparent hover:shadow;
   }
 
   .form-textarea {
-    @apply w-full px-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all duration-300 resize-y min-h-[100px] shadow-sm hover:shadow;
+    @apply w-full px-4 py-3 border border-stone-200 dark:border-stone-700 rounded-lg bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 focus:outline-none focus:ring-2 focus:ring-accent-400 focus:border-transparent transition-all duration-300 resize-y min-h-[100px] shadow-sm hover:shadow;
   }
 
   .form-label {
-    @apply block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300;
+    @apply block mb-2 text-sm font-medium text-stone-700 dark:text-stone-300;
   }
 
   /* Card Styles */
   .card {
-    @apply p-6 bg-white rounded-xl border border-gray-100 transition-all duration-300 dark:bg-gray-800 shadow-soft dark:border-gray-700 hover:shadow-md;
-  }
-
-  .card-gradient {
-    @apply p-6 bg-gradient-to-br rounded-xl border border-gray-100 transition-all duration-300 from-primary-50 to-secondary-50 dark:from-gray-800 dark:to-gray-900 shadow-soft dark:border-gray-700 hover:shadow-md;
+    @apply p-6 bg-white rounded-xl border border-stone-200 transition-all duration-300 dark:bg-stone-800 shadow-soft dark:border-stone-700 hover:shadow-md;
   }
 
   /* Preview Container */
   .preview-container {
-    @apply p-8 mx-auto max-w-7xl text-gray-900 bg-white rounded-xl border border-gray-100 shadow-lg;
+    @apply p-4 sm:p-8 mx-auto max-w-7xl text-stone-900 bg-white rounded-xl border border-stone-200 shadow-lg;
   }
 
   /* Badge Styles */
   .badge {
-    @apply inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200;
-  }
-
-  .badge-secondary {
-    @apply inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-secondary-100 text-secondary-800 dark:bg-secondary-900 dark:text-secondary-200;
-  }
-
-  .badge-accent {
     @apply inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-accent-100 text-accent-800 dark:bg-accent-900 dark:text-accent-200;
-  }
-
-  /* Animated Gradient Background */
-  .animated-gradient {
-    @apply bg-gradient-primary-to-secondary bg-[length:200%_200%] animate-gradient;
   }
 
   /* Section Styles */
   .section-title {
-    @apply flex items-center mb-4 text-xl font-bold text-gray-900 dark:text-white;
+    @apply flex items-center mb-4 text-xl font-bold text-stone-900 dark:text-white;
   }
 
   .section-title::before {
-    @apply content-[''] w-2 h-6 bg-gradient-primary-to-secondary rounded mr-2 inline-block;
+    @apply content-[''] w-2 h-6 bg-accent-500 rounded mr-2 inline-block;
   }
 }
 
@@ -136,7 +115,7 @@
 
 /* Focus Styles */
 *:focus-visible {
-  @apply ring-2 ring-offset-2 outline-none ring-primary-400 dark:ring-offset-gray-900;
+  @apply ring-2 ring-offset-2 outline-none ring-accent-400 dark:ring-offset-stone-900;
 }
 
 /* Disabled Styles */
@@ -148,7 +127,7 @@ textarea:disabled {
 
 /* Selection Styles */
 ::selection {
-  @apply bg-primary-200 text-primary-900 dark:bg-primary-800 dark:text-primary-100;
+  @apply bg-accent-200 text-accent-900 dark:bg-accent-800 dark:text-accent-100;
 }
 
 /* Print Styles */

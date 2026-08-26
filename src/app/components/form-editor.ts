@@ -5,7 +5,7 @@ import {
   signal,
   effect,
 } from '@angular/core';
-import { form, FormField, required, email } from '@angular/forms/signals';
+import { form, FormField, required } from '@angular/forms/signals';
 import { CoverLetter } from '../services/cover-letter';
 
 @Component({
@@ -14,100 +14,11 @@ import { CoverLetter } from '../services/cover-letter';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="space-y-6 animate-fade-in">
-      <h3
-        class="inline-block text-transparent bg-clip-text section-title bg-gradient-primary-to-secondary"
-      >
-        Edit Your Information
-      </h3>
+      <h3 class="section-title">Edit Your Information</h3>
 
       <form class="space-y-5" (submit)="$event.preventDefault()">
         <div class="space-y-5">
-          <h4
-            class="font-medium text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-400"
-          >
-            Personal Information
-          </h4>
-
-          <div class="animate-slide-in-right" style="animation-delay: 100ms">
-            <label class="form-label" for="fullName">Full Name *</label>
-            <input
-              id="fullName"
-              type="text"
-              [formField]="editorForm.fullName"
-              class="form-input"
-              [class.border-red-500]="
-                editorForm.fullName().touched() &&
-                editorForm.fullName().invalid()
-              "
-              placeholder="Enter your full name"
-            />
-            @if (
-              editorForm.fullName().touched() &&
-              editorForm.fullName().errors().length
-            ) {
-              <div class="mt-1 text-sm text-red-500">
-                {{ editorForm.fullName().errors()[0].message }}
-              </div>
-            }
-          </div>
-
-          <div class="animate-slide-in-right" style="animation-delay: 150ms">
-            <label class="form-label" for="email">Email *</label>
-            <input
-              id="email"
-              type="email"
-              [formField]="editorForm.email"
-              class="form-input"
-              [class.border-red-500]="
-                editorForm.email().touched() && editorForm.email().invalid()
-              "
-              placeholder="your.email@example.com"
-            />
-            @if (
-              editorForm.email().touched() && editorForm.email().errors().length
-            ) {
-              <div class="mt-1 text-sm text-red-500">
-                {{ editorForm.email().errors()[0].message }}
-              </div>
-            }
-          </div>
-
-          <div class="animate-slide-in-right" style="animation-delay: 200ms">
-            <label class="form-label" for="phone">Phone *</label>
-            <input
-              id="phone"
-              type="tel"
-              [formField]="editorForm.phone"
-              class="form-input"
-              [class.border-red-500]="
-                editorForm.phone().touched() && editorForm.phone().invalid()
-              "
-              placeholder="(555) 123-4567"
-            />
-            @if (
-              editorForm.phone().touched() && editorForm.phone().errors().length
-            ) {
-              <div class="mt-1 text-sm text-red-500">
-                {{ editorForm.phone().errors()[0].message }}
-              </div>
-            }
-          </div>
-
-          <div class="animate-slide-in-right" style="animation-delay: 250ms">
-            <label class="form-label" for="address">Address</label>
-            <input
-              id="address"
-              type="text"
-              [formField]="editorForm.address"
-              class="form-input"
-              placeholder="Your address"
-            />
-          </div>
-
-          <h4
-            class="mt-8 font-medium text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-400 animate-slide-in-right"
-            style="animation-delay: 300ms"
-          >
+          <h4 class="font-medium text-stone-500 dark:text-stone-400">
             Job Information
           </h4>
 
@@ -169,7 +80,7 @@ import { CoverLetter } from '../services/cover-letter';
           </div>
 
           <h4
-            class="mt-8 font-medium text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-400 animate-slide-in-right"
+            class="mt-8 font-medium text-stone-500 dark:text-stone-400"
             style="animation-delay: 500ms"
           >
             Content
@@ -229,7 +140,7 @@ import { CoverLetter } from '../services/cover-letter';
               <label class="mb-0 form-label">Skills</label>
               <button
                 type="button"
-                class="flex items-center text-sm font-medium text-primary-600 hover:text-primary-700"
+                class="flex items-center text-sm font-medium text-accent-600 hover:text-accent-700"
                 (click)="addSkill()"
               >
                 <svg
@@ -281,10 +192,7 @@ import { CoverLetter } from '../services/cover-letter';
             </div>
           </div>
 
-          <div
-            class="pt-4 border-t border-gray-200 dark:border-gray-700 animate-slide-in-right"
-            style="animation-delay: 750ms"
-          >
+          <div class="pt-4 border-t border-stone-200 dark:border-stone-700">
             <button
               type="button"
               (click)="resetForm()"
@@ -301,13 +209,9 @@ import { CoverLetter } from '../services/cover-letter';
 export class FormEditor {
   private readonly coverLetterService = inject(CoverLetter);
 
-  protected readonly model = signal(this.coverLetterService.formData());
+  protected readonly model = signal(this.coverLetterService.jobData());
 
   protected readonly editorForm = form(this.model, (schemaPath) => {
-    required(schemaPath.fullName, { message: 'Full name is required' });
-    required(schemaPath.email, { message: 'Email is required' });
-    email(schemaPath.email, { message: 'Please enter a valid email address' });
-    required(schemaPath.phone, { message: 'Phone number is required' });
     required(schemaPath.jobTitle, { message: 'Job title is required' });
     required(schemaPath.companyName, { message: 'Company name is required' });
     required(schemaPath.introduction, { message: 'Introduction is required' });
@@ -317,7 +221,7 @@ export class FormEditor {
     // Push every model change back into the shared signal store (autosaved by CoverLetter).
     effect(() => {
       const data = this.model();
-      this.coverLetterService.updateFormData({
+      this.coverLetterService.updateJobData({
         ...data,
         skills: data.skills.filter((skill) => skill.trim() !== ''),
         date: new Date().toLocaleDateString(),

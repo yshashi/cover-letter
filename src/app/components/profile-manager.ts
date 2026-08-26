@@ -16,11 +16,7 @@ import { SavedProfile } from '../services/storage';
   template: `
     <div class="space-y-4 animate-fade-in">
       <div class="flex justify-between items-center">
-        <h3
-          class="inline-block text-transparent bg-clip-text section-title bg-gradient-primary-to-secondary"
-        >
-          Saved Profiles
-        </h3>
+        <h3 class="section-title">Saved Profiles</h3>
         <button
           (click)="toggleSaveDialog()"
           class="flex items-center space-x-2 btn-primary text-sm"
@@ -44,10 +40,10 @@ import { SavedProfile } from '../services/storage';
 
       @if (showSaveDialog()) {
         <div
-          class="p-4 bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20 rounded-lg border border-primary-200 dark:border-primary-800 animate-slide-in-up"
+          class="p-4 bg-accent-50 dark:bg-accent-900/20 rounded-lg border border-accent-200 dark:border-accent-800 animate-slide-in-up"
         >
           <label
-            class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+            class="block mb-2 text-sm font-medium text-stone-700 dark:text-stone-300"
           >
             Profile Name
           </label>
@@ -77,10 +73,10 @@ import { SavedProfile } from '../services/storage';
       <div class="space-y-3">
         @if (profiles().length === 0) {
           <div
-            class="p-8 text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-dashed border-gray-300 dark:border-gray-700"
+            class="p-8 text-center text-stone-500 dark:text-stone-400 bg-stone-50 dark:bg-stone-800/50 rounded-lg border border-dashed border-stone-300 dark:border-stone-700"
           >
             <svg
-              class="w-12 h-12 mx-auto mb-3 text-gray-400"
+              class="w-12 h-12 mx-auto mb-3 text-stone-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -104,29 +100,31 @@ import { SavedProfile } from '../services/storage';
               class="p-4 rounded-lg border transition-all duration-300 cursor-pointer hover:shadow-md group"
               [class]="
                 isCurrentProfile(profile.id)
-                  ? 'border-primary-500 bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20'
-                  : 'border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700'
+                  ? 'border-accent-500 bg-accent-50 dark:bg-accent-900/20'
+                  : 'border-stone-200 dark:border-stone-700 hover:border-accent-300 dark:hover:border-accent-700'
               "
               (click)="loadProfile(profile.id)"
             >
               <div class="flex justify-between items-start">
                 <div class="flex-1">
                   <div class="flex items-center gap-2">
-                    <h4 class="font-semibold text-gray-900 dark:text-gray-100">
+                    <h4
+                      class="font-semibold text-stone-900 dark:text-stone-100"
+                    >
                       {{ profile.name }}
                     </h4>
                     @if (isCurrentProfile(profile.id)) {
                       <span
-                        class="px-2 py-0.5 text-xs font-medium text-primary-700 bg-primary-100 dark:bg-primary-900/50 dark:text-primary-300 rounded-full"
+                        class="px-2 py-0.5 text-xs font-medium text-accent-700 bg-accent-100 dark:bg-accent-900/50 dark:text-accent-300 rounded-full"
                       >
                         Active
                       </span>
                     }
                   </div>
-                  <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  <div class="mt-1 text-xs text-stone-500 dark:text-stone-400">
                     <div>
-                      {{ profile.data.fullName || 'No name' }} •
-                      {{ profile.data.jobTitle || 'No title' }}
+                      {{ profile.data.jobTitle || 'No title' }} •
+                      {{ profile.data.companyName || 'No company' }}
                     </div>
                     <div class="mt-0.5">
                       Updated: {{ formatDate(profile.updatedAt) }}
@@ -160,8 +158,8 @@ import { SavedProfile } from '../services/storage';
       </div>
 
       @if (profiles().length > 0) {
-        <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
-          <p class="text-xs text-gray-500 dark:text-gray-400 text-center">
+        <div class="pt-4 border-t border-stone-200 dark:border-stone-700">
+          <p class="text-xs text-stone-500 dark:text-stone-400 text-center">
             <svg
               class="inline w-4 h-4 mr-1"
               fill="none"
