@@ -4,6 +4,11 @@ module.exports = {
     "./src/**/*.{html,ts}",
   ],
   darkMode: 'class',
+  // Letter templates build accent classes at runtime via {{themeColor}},
+  // so Tailwind's scanner can't see them — keep them generated explicitly.
+  safelist: [
+    { pattern: /^(text|bg|border)-accent-(50|100|200|500|600|700|800)$/ },
+  ],
   theme: {
     extend: {
       colors: {

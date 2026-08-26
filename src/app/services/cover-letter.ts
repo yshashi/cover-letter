@@ -55,14 +55,14 @@ export class CoverLetter {
     if (autoSaved) {
       this.#jobData.set(autoSaved.data);
 
-      // Restore the selected template if saved
+      // Restore the selected template if saved; fall back to the first template
+      // for ids that no longer exist (e.g. the removed 'modern') without
+      // resetting the user's letter data.
       if (autoSaved.templateId) {
-        const template = this.templates.find(
-          (t) => t.id === autoSaved.templateId,
-        );
-        if (template) {
-          this.#selectedTemplate.set(template);
-        }
+        const template =
+          this.templates.find((t) => t.id === autoSaved.templateId) ??
+          this.templates[0];
+        this.#selectedTemplate.set(template);
       }
     }
   }
@@ -208,76 +208,70 @@ export class CoverLetter {
       },
     },
     {
-      id: 'modern',
-      name: 'Modern',
-      description: 'A clean, minimalist template with modern aesthetics',
+      id: 'impact',
+      name: 'Impact',
+      description:
+        'ATS-friendly, results-first layout recruiters scan in seconds',
       template: `
-        <div class="space-y-8 dark:text-gray-200">
-          <div class="space-y-2 text-center dark:text-gray-200">
-            <h1 class="text-4xl font-light text-{{themeColor}}-800">{{fullName}}</h1>
-            <div class="w-16 h-1 bg-{{themeColor}}-500 mx-auto"></div>
-            <p class="text-gray-600 dark:text-gray-400">{{email}} • {{phone}}</p>
-            {{#if_has_address}}<p class="text-sm text-gray-500 dark:text-gray-400">{{address}}</p>{{/if_has_address}}
-          </div>
-
-          <div class="text-center dark:text-gray-200">
-            <h2 class="text-2xl font-light text-{{themeColor}}-700 mb-4">Application for {{jobTitle}}</h2>
-            <p class="text-lg text-gray-600 dark:text-gray-400">{{companyName}}</p>
-          </div>
-
-          <div class="space-y-6 dark:text-gray-200">
-            <div class="border-b border-{{themeColor}}-200 pb-4">
-              <h3 class="text-lg font-medium text-{{themeColor}}-700 mb-3">Introduction</h3>
-              <p class="leading-relaxed text-gray-700 dark:text-gray-400">{{introduction}}</p>
+        <div class="space-y-6 dark:text-gray-200">
+          <div class="flex flex-wrap items-baseline justify-between gap-2 border-b-2 border-{{themeColor}}-600 pb-4">
+            <h1 class="text-2xl font-bold tracking-tight text-{{themeColor}}-700">{{fullName}}</h1>
+            <div class="text-sm text-gray-600 dark:text-gray-400">
+              {{email}} · {{phone}}{{#if_has_address}} · {{address}}{{/if_has_address}}
             </div>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <p class="font-semibold text-gray-800 dark:text-gray-300">Re: Application for {{jobTitle}} — {{companyName}}</p>
+            <p class="text-sm text-gray-500">{{date}}</p>
+          </div>
+
+          <div class="space-y-4">
+            <p>Dear {{hiringManager}},</p>
+
+            <p class="leading-relaxed">{{introduction}}</p>
+
+            {{#if_has_experience}}
+            <div class="border-l-2 border-{{themeColor}}-500 pl-4">
+              <p class="leading-relaxed">{{experience}}</p>
+            </div>
+            {{/if_has_experience}}
 
             {{#if_has_skills}}
-            <div class="border-b border-{{themeColor}}-200 pb-4">
-              <h3 class="text-lg font-medium text-{{themeColor}}-700 mb-3">Core Competencies</h3>
+            <div>
+              <p class="text-sm font-semibold uppercase tracking-wide text-{{themeColor}}-700 mb-2">What I bring to {{companyName}}</p>
               <div class="flex flex-wrap gap-2">
                 {{skillsBadges}}
               </div>
             </div>
             {{/if_has_skills}}
 
-            {{#if_has_experience}}
-            <div class="border-b border-{{themeColor}}-200 pb-4">
-              <h3 class="text-lg font-medium text-{{themeColor}}-700 mb-3">Professional Experience</h3>
-              <p class="leading-relaxed text-gray-700 dark:text-gray-400">{{experience}}</p>
-            </div>
-            {{/if_has_experience}}
+            {{#if_has_closing}}<p class="leading-relaxed">{{closing}}</p>{{/if_has_closing}}
 
-            {{#if_has_closing}}
-            <div>
-              <h3 class="text-lg font-medium text-{{themeColor}}-700 mb-3">Closing Statement</h3>
-              <p class="leading-relaxed text-gray-700 dark:text-gray-400">{{closing}}</p>
+            <div class="pt-2">
+              <p>Best regards,</p>
+              <p class="mt-1 font-semibold text-{{themeColor}}-700">{{fullName}}</p>
             </div>
-            {{/if_has_closing}}
-          </div>
-
-          <div class="pt-6 text-center dark:text-gray-200">
-            <p class="text-sm text-gray-500">{{date}}</p>
-            <p class="text-{{themeColor}}-700 font-medium mt-2">{{fullName}}</p>
           </div>
         </div>
       `,
       sampleData: {
-        jobTitle: 'Product Manager',
-        companyName: 'Future Tech Corp',
-        hiringManager: 'Dr. Lisa Wang',
+        jobTitle: 'Senior Software Engineer',
+        companyName: 'Nimbus Labs',
+        hiringManager: 'Hiring Team',
         introduction:
-          'I am excited to apply for the Product Manager position at Future Tech Corp. With 5 years of experience in product development and a proven track record of launching successful digital products, I am confident in my ability to drive innovation and growth for your organization.',
+          'Your posting for a Senior Software Engineer stood out because it asks for someone who can ship AI-assisted features end to end — exactly what I have spent the last two years doing. At my current company I took an LLM-powered support assistant from prototype to production, cutting average ticket resolution time by 42% for 30,000+ monthly users.',
         skills: [
-          'Product Strategy',
-          'Agile & Scrum',
-          'Market Research',
-          'Data Analysis',
-          'Cross-functional Leadership',
+          'TypeScript & Node.js',
+          'React / Angular',
+          'LLM & RAG integrations',
+          'Cloud (AWS) & CI/CD',
+          'System design at scale',
         ],
         experience:
-          'In my role as Senior Product Analyst at StartUp Solutions, I led the development of three major product features that increased user retention by 35% and generated $2M in additional revenue. My analytical approach and collaborative leadership style have consistently delivered exceptional results.',
+          'Beyond shipping features, I focus on outcomes the business can measure: I led a migration that reduced infrastructure spend by $180K/year, mentored four engineers to promotion, and cut release cycle time from two weeks to two days by rebuilding our deployment pipeline. I work best in teams that value ownership, fast feedback, and pragmatic engineering.',
         closing:
-          "I am passionate about creating products that solve real problems and would welcome the opportunity to discuss how my experience can contribute to Future Tech Corp's mission. Thank you for your consideration.",
+          'I would welcome a short call to discuss how this experience maps to your roadmap. Thank you for your time — I know it is limited, and I appreciate you spending some of it here.',
         date: new Date().toLocaleDateString(),
       },
     },
