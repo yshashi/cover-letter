@@ -291,6 +291,26 @@ export class CoverLetter {
 
     let content = template.template;
 
+    // Resolve {{tokens}} the user typed inside their own paragraphs first, so editing
+    // Personal Info / Job Info updates the content without retyping it.
+    const resolveTokens = (text: string): string =>
+      text
+        .replace(/{{fullName}}/g, data.fullName || 'Your Name')
+        .replace(/{{email}}/g, data.email || 'your.email@example.com')
+        .replace(/{{phone}}/g, data.phone || '(555) 123-4567')
+        .replace(/{{address}}/g, data.address || 'Your Address')
+        .replace(/{{jobTitle}}/g, data.jobTitle || 'Position Title')
+        .replace(/{{companyName}}/g, data.companyName || 'Company Name')
+        .replace(/{{hiringManager}}/g, data.hiringManager || 'Hiring Manager');
+
+    const introduction = resolveTokens(
+      data.introduction || 'Your introduction paragraph...',
+    );
+    const experience = resolveTokens(
+      data.experience || 'Your experience details...',
+    );
+    const closing = resolveTokens(data.closing || 'Your closing statement...');
+
     // Replace placeholders
     content = content.replace(/{{themeColor}}/g, 'accent');
     content = content.replace(/{{fullName}}/g, data.fullName || 'Your Name');
@@ -312,18 +332,9 @@ export class CoverLetter {
       /{{hiringManager}}/g,
       data.hiringManager || 'Hiring Manager',
     );
-    content = content.replace(
-      /{{introduction}}/g,
-      data.introduction || 'Your introduction paragraph...',
-    );
-    content = content.replace(
-      /{{experience}}/g,
-      data.experience || 'Your experience details...',
-    );
-    content = content.replace(
-      /{{closing}}/g,
-      data.closing || 'Your closing statement...',
-    );
+    content = content.replace(/{{introduction}}/g, introduction);
+    content = content.replace(/{{experience}}/g, experience);
+    content = content.replace(/{{closing}}/g, closing);
     content = content.replace(/{{date}}/g, data.date);
 
     // Process conditional sections

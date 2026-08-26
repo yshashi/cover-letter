@@ -90,7 +90,24 @@ import { CoverLetter } from '../services/cover-letter';
             <label for="introduction" class="form-label"
               >Introduction Paragraph *</label
             >
+            <p class="-mt-1 mb-2 text-xs text-stone-500 dark:text-stone-400">
+              Insert a field below to keep it in sync if you edit it later:
+            </p>
+            <div class="flex flex-wrap gap-1.5 mb-2">
+              @for (token of insertableTokens; track token.value) {
+                <button
+                  type="button"
+                  class="chip"
+                  (click)="
+                    insertToken('introduction', token.value, introTextarea)
+                  "
+                >
+                  {{ token.label }}
+                </button>
+              }
+            </div>
             <textarea
+              #introTextarea
               id="introduction"
               [formField]="editorForm.introduction"
               class="form-textarea"
@@ -115,7 +132,21 @@ import { CoverLetter } from '../services/cover-letter';
             <label for="experience" class="form-label"
               >Experience & Achievements</label
             >
+            <div class="flex flex-wrap gap-1.5 mb-2">
+              @for (token of insertableTokens; track token.value) {
+                <button
+                  type="button"
+                  class="chip"
+                  (click)="
+                    insertToken('experience', token.value, experienceTextarea)
+                  "
+                >
+                  {{ token.label }}
+                </button>
+              }
+            </div>
             <textarea
+              #experienceTextarea
               id="experience"
               [formField]="editorForm.experience"
               class="form-textarea"
@@ -126,7 +157,19 @@ import { CoverLetter } from '../services/cover-letter';
 
           <div class="animate-slide-in-right" style="animation-delay: 650ms">
             <label for="closing" class="form-label">Closing Statement</label>
+            <div class="flex flex-wrap gap-1.5 mb-2">
+              @for (token of insertableTokens; track token.value) {
+                <button
+                  type="button"
+                  class="chip"
+                  (click)="insertToken('closing', token.value, closingTextarea)"
+                >
+                  {{ token.label }}
+                </button>
+              }
+            </div>
             <textarea
+              #closingTextarea
               id="closing"
               [formField]="editorForm.closing"
               class="form-textarea"
@@ -209,6 +252,15 @@ import { CoverLetter } from '../services/cover-letter';
 export class FormEditor {
   private readonly coverLetterService = inject(CoverLetter);
 
+  // Inserted as {{token}} into free-text fields; CoverLetter.compiledContent resolves
+  // them live so editing Personal Info / Job Info never requires retyping the content.
+  protected readonly insertableTokens = [
+    { label: 'Your Name', value: '{{fullName}}' },
+    { label: 'Job Title', value: '{{jobTitle}}' },
+    { label: 'Company', value: '{{companyName}}' },
+    { label: 'Hiring Manager', value: '{{hiringManager}}' },
+  ];
+
   protected readonly model = signal(this.coverLetterService.jobData());
 
   protected readonly editorForm = form(this.model, (schemaPath) => {
@@ -248,5 +300,24 @@ export class FormEditor {
     if (currentTemplate) {
       this.model.set({ ...currentTemplate.sampleData });
     }
+  }
+
+  insertToken(
+    field: 'introduction' | 'experience' | 'closing',
+    token: string,
+    textarea: HTMLTextAreaElement,
+  ): void {
+    const start = textarea.selectionStart ?? textarea.value.length;
+    const end = textarea.selectionEnd ?? textarea.value.length;
+    const current = this.model()[field];
+    const updated = current.slice(0, start) + token + current.slice(end);
+
+    this.model.update((m) => ({ ...m, [field]: updated }));
+
+    queueMicrotask(() => {
+      textarea.focus();
+      const caret = start + token.length;
+      textarea.setSelectionRange(caret, caret);
+    });
   }
 }
