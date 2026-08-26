@@ -9,7 +9,6 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import html2pdf from 'html2pdf.js';
 import { CoverLetter } from '../services/cover-letter';
 import { NotificationService } from '../services/notification';
 
@@ -159,6 +158,9 @@ export class PreviewComponent {
     this.isDownloading.set(true);
 
     try {
+      // Lazy-load html2pdf.js (and its html2canvas/jsPDF/canvg deps) so it never bloats
+      // the initial bundle — it's only needed at the moment of an actual download.
+      const html2pdf = (await import('html2pdf.js')).default;
       const clonedElement = element.cloneNode(true) as HTMLElement;
 
       clonedElement.style.fontFamily = 'Roboto, sans-serif';
