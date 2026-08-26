@@ -6,6 +6,7 @@ import {
   inject,
   viewChild,
   signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import html2pdf from 'html2pdf.js';
@@ -14,6 +15,7 @@ import { NotificationService } from '../services/notification';
 
 @Component({
   selector: 'app-preview',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="space-y-4 animate-fade-in">
       <div class="flex justify-between items-center flex-wrap gap-3">

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { CoverLetter } from '../services/cover-letter';
@@ -7,6 +7,7 @@ import { CoverLetterData } from '../models/cover-letter';
 @Component({
   selector: 'app-form-editor',
   imports: [ReactiveFormsModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="space-y-6 animate-fade-in">
       <h3 class="inline-block text-transparent bg-clip-text section-title bg-gradient-primary-to-secondary">Edit Your Information</h3>

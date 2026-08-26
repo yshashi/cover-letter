@@ -1,10 +1,11 @@
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject, computed, ChangeDetectionStrategy } from '@angular/core';
 
 import { Theme } from '../services/theme';
 import { CoverLetter } from '../services/cover-letter';
 
 @Component({
   selector: 'app-header',
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <header
       class="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b shadow-sm border-gray-200 dark:border-gray-800"

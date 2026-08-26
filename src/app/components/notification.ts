@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { NotificationService } from '../services/notification';
 
 @Component({
   selector: 'app-notification',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="fixed top-20 right-4 z-[100] space-y-2 animate-fade-in">
       @for (notification of notificationService.notifications$(); track

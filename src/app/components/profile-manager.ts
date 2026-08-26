@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CoverLetter } from '../services/cover-letter';
 import { NotificationService } from '../services/notification';
@@ -8,6 +8,7 @@ import { SavedProfile } from '../services/storage';
   selector: 'app-profile-manager',
   standalone: true,
   imports: [FormsModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   template: `
     <div class="space-y-4 animate-fade-in">
       <div class="flex justify-between items-center">

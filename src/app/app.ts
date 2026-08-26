@@ -1,4 +1,4 @@
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { TemplateSelectorComponent } from './components/template-selector';
 import { HeaderComponent } from './components/header';
 import { FormEditor } from './components/form-editor';
@@ -17,6 +17,7 @@ import { ProfileManagerComponent } from './components/profile-manager';
     ProfileManagerComponent,
   ],
   templateUrl: './app.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './app.css',
 })
 export class App implements OnInit {
