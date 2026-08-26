@@ -165,20 +165,20 @@ export class PreviewComponent {
       clonedElement.style.backgroundColor = '#ffffff';
       clonedElement.style.color = '#000000';
       clonedElement.style.padding = '20px';
+      // Only the outer preview chrome (the .preview-container wrapper) should lose its
+      // border/shadow here — templates like Creative/Impact use `border-*` classes as
+      // intentional accent dividers, so stripping borders on every child element (as
+      // this used to do) erased those lines and made the layout look broken.
       clonedElement.style.border = 'none';
       clonedElement.style.boxShadow = 'none';
 
       const allElements = clonedElement.querySelectorAll('*');
       allElements.forEach((el) => {
-        if (el instanceof HTMLElement) {
-          if (el.className) {
-            el.className = el.className
-              .split(' ')
-              .filter((cls) => !cls.startsWith('dark:'))
-              .join(' ');
-          }
-          el.style.border = 'none';
-          el.style.boxShadow = 'none';
+        if (el instanceof HTMLElement && el.className) {
+          el.className = el.className
+            .split(' ')
+            .filter((cls) => !cls.startsWith('dark:'))
+            .join(' ');
         }
       });
 

@@ -7,6 +7,28 @@ import {
 import { StorageService } from './storage';
 import { PersonalInfoService } from './personal-info';
 
+// Shared across all built-in templates so switching templates never changes the letter's
+// wording; {{jobTitle}}/{{companyName}} resolve live, so this stays accurate for any role.
+const GENERIC_SAMPLE_DATA: JobLetterData = {
+  jobTitle: 'Software Engineer',
+  companyName: 'Company Name',
+  hiringManager: 'Hiring Manager',
+  introduction:
+    'I am writing to express my interest in the {{jobTitle}} position at {{companyName}}. Based on the description of this role, I believe my background and experience make me a strong fit, and I am excited about the opportunity to contribute to your team.',
+  skills: [
+    'Communication',
+    'Problem Solving',
+    'Team Collaboration',
+    'Adaptability',
+    'Time Management',
+  ],
+  experience:
+    'In my current role, I have consistently delivered results by taking ownership of important projects, collaborating closely with cross-functional teams, and focusing on outcomes that matter to the business. I have a track record of solving problems efficiently, improving processes, and supporting the growth of the people I work with.',
+  closing:
+    'I would welcome the opportunity to discuss how my experience and skills could contribute to {{companyName}}. Thank you for taking the time to consider my application, and I look forward to the possibility of speaking with you soon.',
+  date: new Date().toLocaleDateString(),
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -116,25 +138,7 @@ export class CoverLetter {
           </div>
         </div>
       `,
-      sampleData: {
-        jobTitle: 'Software Developer',
-        companyName: 'Tech Solutions Inc.',
-        hiringManager: 'Ms. Sarah Johnson',
-        introduction:
-          'I am writing to express my strong interest in the Software Developer position at Tech Solutions Inc. With over 3 years of experience in full-stack development, I am excited about the opportunity to contribute to your innovative team.',
-        skills: [
-          'JavaScript & TypeScript',
-          'React & Angular',
-          'Node.js & Express',
-          'Database Management',
-          'Agile Development',
-        ],
-        experience:
-          'In my current role at Digital Innovations, I have successfully led the development of multiple web applications, resulting in a 40% increase in user engagement. My expertise in modern frameworks and commitment to clean, maintainable code make me an ideal candidate for this position.',
-        closing:
-          "I am eager to discuss how my skills and passion for technology can contribute to Tech Solutions Inc.'s continued success. Thank you for considering my application.",
-        date: new Date().toLocaleDateString(),
-      },
+      sampleData: GENERIC_SAMPLE_DATA,
     },
     {
       id: 'creative',
@@ -187,25 +191,7 @@ export class CoverLetter {
           </div>
         </div>
       `,
-      sampleData: {
-        jobTitle: 'UX Designer',
-        companyName: 'Creative Studios',
-        hiringManager: 'Mr. Alex Chen',
-        introduction:
-          "As a passionate UX Designer with 4 years of experience creating user-centered digital experiences, I am thrilled to apply for the UX Designer position at Creative Studios. Your company's commitment to innovative design solutions aligns perfectly with my creative vision.",
-        skills: [
-          'User Research & Testing',
-          'Wireframing & Prototyping',
-          'Figma & Sketch',
-          'Design Systems',
-          'Accessibility Design',
-        ],
-        experience:
-          'At Innovation Labs, I redesigned the mobile app interface, leading to a 60% increase in user satisfaction scores. My collaborative approach and attention to detail have consistently delivered exceptional results.',
-        closing:
-          'I would love to bring my creativity and user-focused approach to Creative Studios. Thank you for your time and consideration.',
-        date: new Date().toLocaleDateString(),
-      },
+      sampleData: GENERIC_SAMPLE_DATA,
     },
     {
       id: 'impact',
@@ -214,66 +200,45 @@ export class CoverLetter {
         'ATS-friendly, results-first layout recruiters scan in seconds',
       template: `
         <div class="space-y-6 dark:text-gray-200">
-          <div class="flex flex-wrap items-baseline justify-between gap-2 border-b-2 border-{{themeColor}}-600 pb-4">
-            <h1 class="text-2xl font-bold tracking-tight text-{{themeColor}}-700">{{fullName}}</h1>
-            <div class="text-sm text-gray-600 dark:text-gray-400">
-              {{email}} · {{phone}}{{#if_has_address}} · {{address}}{{/if_has_address}}
+          <div class="flex flex-wrap gap-4 justify-between items-start pb-4 border-b-2 border-{{themeColor}}-600 break-inside-avoid">
+            <div class="space-y-1">
+              <h1 class="text-2xl font-bold text-{{themeColor}}-700">{{fullName}}</h1>
+              <p class="text-sm text-gray-600 dark:text-gray-400">{{email}} &bull; {{phone}}{{#if_has_address}} &bull; {{address}}{{/if_has_address}}</p>
             </div>
+            <p class="text-sm text-right text-gray-500 whitespace-nowrap dark:text-gray-400">{{date}}</p>
           </div>
 
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <p class="font-semibold text-gray-800 dark:text-gray-300">Re: Application for {{jobTitle}} — {{companyName}}</p>
-            <p class="text-sm text-gray-500">{{date}}</p>
+          <div class="p-4 bg-{{themeColor}}-50 rounded-lg break-inside-avoid dark:bg-gray-800">
+            <p class="font-semibold text-{{themeColor}}-800 dark:text-{{themeColor}}-200">Re: Application for {{jobTitle}}</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">{{companyName}}</p>
           </div>
 
           <div class="space-y-4">
-            <p>Dear {{hiringManager}},</p>
+            <p class="font-medium">Dear {{hiringManager}},</p>
 
-            <p class="leading-relaxed">{{introduction}}</p>
+            <p>{{introduction}}</p>
 
-            {{#if_has_experience}}
-            <div class="border-l-2 border-{{themeColor}}-500 pl-4">
-              <p class="leading-relaxed">{{experience}}</p>
-            </div>
-            {{/if_has_experience}}
+            {{#if_has_experience}}<p>{{experience}}</p>{{/if_has_experience}}
 
             {{#if_has_skills}}
-            <div>
-              <p class="text-sm font-semibold uppercase tracking-wide text-{{themeColor}}-700 mb-2">What I bring to {{companyName}}</p>
-              <div class="flex flex-wrap gap-2">
-                {{skillsBadges}}
-              </div>
+            <div class="break-inside-avoid">
+              <p class="mb-2 font-medium text-{{themeColor}}-700">Key strengths for this role:</p>
+              <ul class="pl-5 space-y-1 list-disc">
+                {{skillsList}}
+              </ul>
             </div>
             {{/if_has_skills}}
 
-            {{#if_has_closing}}<p class="leading-relaxed">{{closing}}</p>{{/if_has_closing}}
+            {{#if_has_closing}}<p>{{closing}}</p>{{/if_has_closing}}
 
-            <div class="pt-2">
+            <div class="mt-6 break-inside-avoid">
               <p>Best regards,</p>
-              <p class="mt-1 font-semibold text-{{themeColor}}-700">{{fullName}}</p>
+              <p class="mt-2 font-medium">{{fullName}}</p>
             </div>
           </div>
         </div>
       `,
-      sampleData: {
-        jobTitle: 'Senior Software Engineer',
-        companyName: 'Nimbus Labs',
-        hiringManager: 'Hiring Team',
-        introduction:
-          'Your posting for a Senior Software Engineer stood out because it asks for someone who can ship AI-assisted features end to end — exactly what I have spent the last two years doing. At my current company I took an LLM-powered support assistant from prototype to production, cutting average ticket resolution time by 42% for 30,000+ monthly users.',
-        skills: [
-          'TypeScript & Node.js',
-          'React / Angular',
-          'LLM & RAG integrations',
-          'Cloud (AWS) & CI/CD',
-          'System design at scale',
-        ],
-        experience:
-          'Beyond shipping features, I focus on outcomes the business can measure: I led a migration that reduced infrastructure spend by $180K/year, mentored four engineers to promotion, and cut release cycle time from two weeks to two days by rebuilding our deployment pipeline. I work best in teams that value ownership, fast feedback, and pragmatic engineering.',
-        closing:
-          'I would welcome a short call to discuss how this experience maps to your roadmap. Thank you for your time — I know it is limited, and I appreciate you spending some of it here.',
-        date: new Date().toLocaleDateString(),
-      },
+      sampleData: GENERIC_SAMPLE_DATA,
     },
   ];
 
@@ -374,8 +339,9 @@ export class CoverLetter {
     const skillsBadges = hasSkills
       ? data.skills
           .map(
+            // inline-block + its own margin (not a flex `gap` wrapper) so spacing survives html2canvas PDF export
             (skill) =>
-              `<span class="px-3 py-1 text-sm rounded-full bg-accent-100 text-accent-800">${skill}</span>`,
+              `<span class="inline-block mr-2 mb-2 px-3 py-1 text-sm rounded-full bg-accent-100 text-accent-800">${skill}</span>`,
           )
           .join('')
       : '';
