@@ -1,5 +1,5 @@
 import { Component, inject, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Theme } from '../services/theme';
 import { CoverLetter } from '../services/cover-letter';
 
