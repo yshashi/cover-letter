@@ -1,14 +1,18 @@
-import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {
+  Component,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+import { form, FormField, validate, submit } from '@angular/forms/signals';
 import { CoverLetter } from '../services/cover-letter';
 import { NotificationService } from '../services/notification';
 import { SavedProfile } from '../services/storage';
 
 @Component({
   selector: 'app-profile-manager',
-  standalone: true,
-  imports: [FormsModule],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [FormField],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="space-y-4 animate-fade-in">
       <div class="flex justify-between items-center">
@@ -39,138 +43,141 @@ import { SavedProfile } from '../services/storage';
       </div>
 
       @if (showSaveDialog()) {
-      <div
-        class="p-4 bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20 rounded-lg border border-primary-200 dark:border-primary-800 animate-slide-in-up"
-      >
-        <label
-          class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+        <div
+          class="p-4 bg-gradient-to-br from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20 rounded-lg border border-primary-200 dark:border-primary-800 animate-slide-in-up"
         >
-          Profile Name
-        </label>
-        <div class="flex gap-2">
-          <input
-            type="text"
-            [(ngModel)]="newProfileName"
-            (keyup.enter)="saveProfile()"
-            class="flex-1 form-input"
-            placeholder="e.g., Software Developer Profile"
-            autofocus
-          />
-          <button
-            (click)="saveProfile()"
-            class="btn-primary"
-            [disabled]="!newProfileName().trim()"
+          <label
+            class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
           >
-            Save
-          </button>
-          <button (click)="toggleSaveDialog()" class="btn-secondary">
-            Cancel
-          </button>
+            Profile Name
+          </label>
+          <div class="flex gap-2">
+            <input
+              type="text"
+              [formField]="nameField"
+              (keyup.enter)="saveProfile()"
+              class="flex-1 form-input"
+              placeholder="e.g., Software Developer Profile"
+              autofocus
+            />
+            <button
+              (click)="saveProfile()"
+              class="btn-primary"
+              [disabled]="nameField().invalid()"
+            >
+              Save
+            </button>
+            <button (click)="toggleSaveDialog()" class="btn-secondary">
+              Cancel
+            </button>
+          </div>
         </div>
-      </div>
       }
 
       <div class="space-y-3">
         @if (profiles().length === 0) {
-        <div
-          class="p-8 text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-dashed border-gray-300 dark:border-gray-700"
-        >
-          <svg
-            class="w-12 h-12 mx-auto mb-3 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+          <div
+            class="p-8 text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-dashed border-gray-300 dark:border-gray-700"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-            ></path>
-          </svg>
-          <p class="text-sm font-medium">No saved profiles yet</p>
-          <p class="mt-1 text-xs">
-            Save your current data to quickly switch between different profiles
-          </p>
-        </div>
-        } @else { @for (profile of profiles(); track profile.id) {
-        <div
-          class="p-4 rounded-lg border transition-all duration-300 cursor-pointer hover:shadow-md group"
-          [class]="
-            isCurrentProfile(profile.id)
-              ? 'border-primary-500 bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20'
-              : 'border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700'
-          "
-          (click)="loadProfile(profile.id)"
-        >
-          <div class="flex justify-between items-start">
-            <div class="flex-1">
-              <div class="flex items-center gap-2">
-                <h4 class="font-semibold text-gray-900 dark:text-gray-100">
-                  {{ profile.name }}
-                </h4>
-                @if (isCurrentProfile(profile.id)) {
-                <span
-                  class="px-2 py-0.5 text-xs font-medium text-primary-700 bg-primary-100 dark:bg-primary-900/50 dark:text-primary-300 rounded-full"
+            <svg
+              class="w-12 h-12 mx-auto mb-3 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+              ></path>
+            </svg>
+            <p class="text-sm font-medium">No saved profiles yet</p>
+            <p class="mt-1 text-xs">
+              Save your current data to quickly switch between different
+              profiles
+            </p>
+          </div>
+        } @else {
+          @for (profile of profiles(); track profile.id) {
+            <div
+              class="p-4 rounded-lg border transition-all duration-300 cursor-pointer hover:shadow-md group"
+              [class]="
+                isCurrentProfile(profile.id)
+                  ? 'border-primary-500 bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-primary-900/20 dark:to-secondary-900/20'
+                  : 'border-gray-200 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-700'
+              "
+              (click)="loadProfile(profile.id)"
+            >
+              <div class="flex justify-between items-start">
+                <div class="flex-1">
+                  <div class="flex items-center gap-2">
+                    <h4 class="font-semibold text-gray-900 dark:text-gray-100">
+                      {{ profile.name }}
+                    </h4>
+                    @if (isCurrentProfile(profile.id)) {
+                      <span
+                        class="px-2 py-0.5 text-xs font-medium text-primary-700 bg-primary-100 dark:bg-primary-900/50 dark:text-primary-300 rounded-full"
+                      >
+                        Active
+                      </span>
+                    }
+                  </div>
+                  <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <div>
+                      {{ profile.data.fullName || 'No name' }} •
+                      {{ profile.data.jobTitle || 'No title' }}
+                    </div>
+                    <div class="mt-0.5">
+                      Updated: {{ formatDate(profile.updatedAt) }}
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  (click)="deleteProfile(profile.id, $event)"
+                  class="p-2 text-red-500 bg-red-50 dark:bg-red-900/30 rounded-lg transition-all duration-300 opacity-0 group-hover:opacity-100 hover:bg-red-100 dark:hover:bg-red-900/50"
+                  aria-label="Delete profile"
                 >
-                  Active
-                </span>
-                }
-              </div>
-              <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                <div>
-                  {{ profile.data.fullName || 'No name' }} •
-                  {{ profile.data.jobTitle || 'No title' }}
-                </div>
-                <div class="mt-0.5">
-                  Updated: {{ formatDate(profile.updatedAt) }}
-                </div>
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    ></path>
+                  </svg>
+                </button>
               </div>
             </div>
-
-            <button
-              (click)="deleteProfile(profile.id, $event)"
-              class="p-2 text-red-500 bg-red-50 dark:bg-red-900/30 rounded-lg transition-all duration-300 opacity-0 group-hover:opacity-100 hover:bg-red-100 dark:hover:bg-red-900/50"
-              aria-label="Delete profile"
-            >
-              <svg
-                class="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                ></path>
-              </svg>
-            </button>
-          </div>
-        </div>
-        } }
+          }
+        }
       </div>
 
       @if (profiles().length > 0) {
-      <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
-        <p class="text-xs text-gray-500 dark:text-gray-400 text-center">
-          <svg
-            class="inline w-4 h-4 mr-1"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            ></path>
-          </svg>
-          Your data is automatically saved as you type
-        </p>
-      </div>
+        <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
+          <p class="text-xs text-gray-500 dark:text-gray-400 text-center">
+            <svg
+              class="inline w-4 h-4 mr-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+            Your data is automatically saved as you type
+          </p>
+        </div>
       }
     </div>
   `,
@@ -181,7 +188,15 @@ export class ProfileManagerComponent {
 
   protected profiles = signal<SavedProfile[]>([]);
   protected showSaveDialog = signal(false);
-  protected newProfileName = signal('');
+
+  protected readonly newProfileName = signal('');
+  protected readonly nameField = form(this.newProfileName, (p) => {
+    validate(p, ({ value }) =>
+      value().trim() === ''
+        ? { kind: 'required', message: 'Please enter a profile name' }
+        : undefined,
+    );
+  });
 
   constructor() {
     this.loadProfiles();
@@ -199,22 +214,19 @@ export class ProfileManagerComponent {
   }
 
   saveProfile(): void {
-    const name = this.newProfileName().trim();
-    if (!name) {
-      this.notification.warning('Please enter a profile name');
-      return;
-    }
-
-    try {
-      this.coverLetter.saveCurrentProfile(name);
-      this.loadProfiles();
-      this.notification.success(`Profile "${name}" saved successfully!`);
-      this.showSaveDialog.set(false);
-      this.newProfileName.set('');
-    } catch (error) {
-      this.notification.error('Failed to save profile');
-      console.error('Error saving profile:', error);
-    }
+    submit(this.nameField, async () => {
+      const name = this.newProfileName().trim();
+      try {
+        this.coverLetter.saveCurrentProfile(name);
+        this.loadProfiles();
+        this.notification.success(`Profile "${name}" saved successfully!`);
+        this.showSaveDialog.set(false);
+        this.newProfileName.set('');
+      } catch (error) {
+        this.notification.error('Failed to save profile');
+        console.error('Error saving profile:', error);
+      }
+    });
   }
 
   loadProfile(id: string): void {

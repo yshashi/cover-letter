@@ -1,27 +1,31 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  computed,
+  input,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 
 @Component({
   selector: 'app-character-counter',
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.Eager,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex justify-between items-center mt-1 text-xs">
       <span class="text-gray-500 dark:text-gray-400">
-        {{ label }}
+        {{ label() }}
       </span>
-      <span class="font-medium transition-colors" [class]="getColorClass()">
-        {{ current }} / {{ max }}
+      <span class="font-medium transition-colors" [class]="colorClass()">
+        {{ current() }} / {{ max() }}
       </span>
     </div>
   `,
 })
 export class CharacterCounterComponent {
-  @Input() current: number = 0;
-  @Input() max: number = 500;
-  @Input() label: string = 'Characters';
+  current = input(0);
+  max = input(500);
+  label = input('Characters');
 
-  getColorClass(): string {
-    const percentage = (this.current / this.max) * 100;
+  protected readonly colorClass = computed(() => {
+    const percentage = (this.current() / this.max()) * 100;
 
     if (percentage >= 100) {
       return 'text-red-600 dark:text-red-400';
@@ -32,5 +36,5 @@ export class CharacterCounterComponent {
     } else {
       return 'text-gray-600 dark:text-gray-400';
     }
-  }
+  });
 }

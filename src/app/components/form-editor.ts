@@ -1,34 +1,52 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  signal,
+  effect,
+} from '@angular/core';
+import { form, FormField, required, email } from '@angular/forms/signals';
 import { CoverLetter } from '../services/cover-letter';
-import { CoverLetterData } from '../models/cover-letter';
 
 @Component({
   selector: 'app-form-editor',
-  imports: [ReactiveFormsModule],
-  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [FormField],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="space-y-6 animate-fade-in">
-      <h3 class="inline-block text-transparent bg-clip-text section-title bg-gradient-primary-to-secondary">Edit Your Information</h3>
+      <h3
+        class="inline-block text-transparent bg-clip-text section-title bg-gradient-primary-to-secondary"
+      >
+        Edit Your Information
+      </h3>
 
-      <form [formGroup]="form" class="space-y-5">
+      <form class="space-y-5" (submit)="$event.preventDefault()">
         <div class="space-y-5">
-          <h4 class="font-medium text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-400">Personal Information</h4>
+          <h4
+            class="font-medium text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-400"
+          >
+            Personal Information
+          </h4>
 
           <div class="animate-slide-in-right" style="animation-delay: 100ms">
             <label class="form-label" for="fullName">Full Name *</label>
             <input
               id="fullName"
               type="text"
-              formControlName="fullName"
+              [formField]="editorForm.fullName"
               class="form-input"
-              [class.border-red-500]="isFieldInvalid('fullName')"
+              [class.border-red-500]="
+                editorForm.fullName().touched() &&
+                editorForm.fullName().invalid()
+              "
               placeholder="Enter your full name"
-            >
-            @if(isFieldInvalid('fullName')) {
+            />
+            @if (
+              editorForm.fullName().touched() &&
+              editorForm.fullName().errors().length
+            ) {
               <div class="mt-1 text-sm text-red-500">
-                Full name is required
+                {{ editorForm.fullName().errors()[0].message }}
               </div>
             }
           </div>
@@ -38,14 +56,18 @@ import { CoverLetterData } from '../models/cover-letter';
             <input
               id="email"
               type="email"
-              formControlName="email"
+              [formField]="editorForm.email"
               class="form-input"
-              [class.border-red-500]="isFieldInvalid('email')"
+              [class.border-red-500]="
+                editorForm.email().touched() && editorForm.email().invalid()
+              "
               placeholder="your.email@example.com"
-            >
-            @if(isFieldInvalid('email')) {
+            />
+            @if (
+              editorForm.email().touched() && editorForm.email().errors().length
+            ) {
               <div class="mt-1 text-sm text-red-500">
-                Please enter a valid email address
+                {{ editorForm.email().errors()[0].message }}
               </div>
             }
           </div>
@@ -55,14 +77,18 @@ import { CoverLetterData } from '../models/cover-letter';
             <input
               id="phone"
               type="tel"
-              formControlName="phone"
+              [formField]="editorForm.phone"
               class="form-input"
-              [class.border-red-500]="isFieldInvalid('phone')"
+              [class.border-red-500]="
+                editorForm.phone().touched() && editorForm.phone().invalid()
+              "
               placeholder="(555) 123-4567"
-            >
-            @if(isFieldInvalid('phone')) {
+            />
+            @if (
+              editorForm.phone().touched() && editorForm.phone().errors().length
+            ) {
               <div class="mt-1 text-sm text-red-500">
-                Phone number is required
+                {{ editorForm.phone().errors()[0].message }}
               </div>
             }
           </div>
@@ -72,27 +98,38 @@ import { CoverLetterData } from '../models/cover-letter';
             <input
               id="address"
               type="text"
-              formControlName="address"
+              [formField]="editorForm.address"
               class="form-input"
               placeholder="Your address"
-            >
+            />
           </div>
 
-          <h4 class="mt-8 font-medium text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-400 animate-slide-in-right" style="animation-delay: 300ms">Job Information</h4>
+          <h4
+            class="mt-8 font-medium text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-400 animate-slide-in-right"
+            style="animation-delay: 300ms"
+          >
+            Job Information
+          </h4>
 
           <div class="animate-slide-in-right" style="animation-delay: 350ms">
             <label for="jobTitle" class="form-label">Job Title *</label>
             <input
               type="text"
               id="jobTitle"
-              formControlName="jobTitle"
+              [formField]="editorForm.jobTitle"
               class="form-input"
-              [class.border-red-500]="isFieldInvalid('jobTitle')"
+              [class.border-red-500]="
+                editorForm.jobTitle().touched() &&
+                editorForm.jobTitle().invalid()
+              "
               placeholder="Position you're applying for"
             />
-            @if(isFieldInvalid('jobTitle')) {
+            @if (
+              editorForm.jobTitle().touched() &&
+              editorForm.jobTitle().errors().length
+            ) {
               <div class="mt-1 text-sm text-red-500">
-                Job title is required
+                {{ editorForm.jobTitle().errors()[0].message }}
               </div>
             }
           </div>
@@ -102,14 +139,20 @@ import { CoverLetterData } from '../models/cover-letter';
             <input
               type="text"
               id="companyName"
-              formControlName="companyName"
+              [formField]="editorForm.companyName"
               class="form-input"
-              [class.border-red-500]="isFieldInvalid('companyName')"
+              [class.border-red-500]="
+                editorForm.companyName().touched() &&
+                editorForm.companyName().invalid()
+              "
               placeholder="Company you're applying to"
             />
-            @if(isFieldInvalid('companyName')) {
+            @if (
+              editorForm.companyName().touched() &&
+              editorForm.companyName().errors().length
+            ) {
               <div class="mt-1 text-sm text-red-500">
-                Company name is required
+                {{ editorForm.companyName().errors()[0].message }}
               </div>
             }
           </div>
@@ -119,36 +162,51 @@ import { CoverLetterData } from '../models/cover-letter';
             <input
               type="text"
               id="hiringManager"
-              formControlName="hiringManager"
+              [formField]="editorForm.hiringManager"
               class="form-input"
               placeholder="Mr./Ms. Last Name or 'Hiring Manager'"
             />
           </div>
 
-          <h4 class="mt-8 font-medium text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-400 animate-slide-in-right" style="animation-delay: 500ms">Content</h4>
+          <h4
+            class="mt-8 font-medium text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-200 dark:to-gray-400 animate-slide-in-right"
+            style="animation-delay: 500ms"
+          >
+            Content
+          </h4>
 
           <div class="animate-slide-in-right" style="animation-delay: 550ms">
-            <label for="introduction" class="form-label">Introduction Paragraph *</label>
+            <label for="introduction" class="form-label"
+              >Introduction Paragraph *</label
+            >
             <textarea
               id="introduction"
-              formControlName="introduction"
+              [formField]="editorForm.introduction"
               class="form-textarea"
-              [class.border-red-500]="isFieldInvalid('introduction')"
+              [class.border-red-500]="
+                editorForm.introduction().touched() &&
+                editorForm.introduction().invalid()
+              "
               placeholder="Write your opening paragraph..."
               rows="4"
             ></textarea>
-            @if(isFieldInvalid('introduction')) {
+            @if (
+              editorForm.introduction().touched() &&
+              editorForm.introduction().errors().length
+            ) {
               <div class="mt-1 text-sm text-red-500">
-                Introduction is required
+                {{ editorForm.introduction().errors()[0].message }}
               </div>
             }
           </div>
 
           <div class="animate-slide-in-right" style="animation-delay: 600ms">
-            <label for="experience" class="form-label">Experience & Achievements</label>
+            <label for="experience" class="form-label"
+              >Experience & Achievements</label
+            >
             <textarea
               id="experience"
-              formControlName="experience"
+              [formField]="editorForm.experience"
               class="form-textarea"
               placeholder="Describe your relevant experience and achievements..."
               rows="6"
@@ -159,7 +217,7 @@ import { CoverLetterData } from '../models/cover-letter';
             <label for="closing" class="form-label">Closing Statement</label>
             <textarea
               id="closing"
-              formControlName="closing"
+              [formField]="editorForm.closing"
               class="form-textarea"
               placeholder="Write your closing paragraph..."
               rows="3"
@@ -168,30 +226,40 @@ import { CoverLetterData } from '../models/cover-letter';
 
           <div class="animate-slide-in-right" style="animation-delay: 700ms">
             <div class="flex justify-between items-center">
-              <label for="skills" class="mb-0 form-label">Skills</label>
+              <label class="mb-0 form-label">Skills</label>
               <button
                 type="button"
                 class="flex items-center text-sm font-medium text-primary-600 hover:text-primary-700"
                 (click)="addSkill()"
               >
-                <svg class="mr-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                <svg
+                  class="mr-1 w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  ></path>
                 </svg>
                 Add Skill
               </button>
             </div>
-            <div formArrayName="skills" class="mt-3 space-y-3">
-              @for(skillControl of skillsArray.controls; track $index) {
+            <div class="mt-3 space-y-3">
+              @for (skill of editorForm.skills; track $index; let i = $index) {
                 <div class="flex items-center space-x-2">
                   <input
-                    [formControlName]="$index"
+                    [formField]="skill"
                     class="flex-1 form-input"
                     placeholder="Enter a skill"
                   />
                   <button
                     type="button"
                     class="p-2 text-red-500 bg-gradient-to-r from-red-50 to-red-100 rounded-lg transition-all duration-300 hover:shadow-sm dark:from-red-900/30 dark:to-red-800/30 dark:text-red-400 dark:hover:from-red-900/40 dark:hover:to-red-800/40"
-                    (click)="removeSkill($index)"
+                    (click)="removeSkill(i)"
                     aria-label="Remove skill"
                   >
                     <svg
@@ -213,7 +281,10 @@ import { CoverLetterData } from '../models/cover-letter';
             </div>
           </div>
 
-          <div class="pt-4 border-t border-gray-200 dark:border-gray-700 animate-slide-in-right" style="animation-delay: 750ms">
+          <div
+            class="pt-4 border-t border-gray-200 dark:border-gray-700 animate-slide-in-right"
+            style="animation-delay: 750ms"
+          >
             <button
               type="button"
               (click)="resetForm()"
@@ -227,93 +298,51 @@ import { CoverLetterData } from '../models/cover-letter';
     </div>
   `,
 })
-export class FormEditor implements OnInit, OnDestroy {
-  form!: FormGroup;
-  private destroy$ = new Subject<void>();
+export class FormEditor {
+  private readonly coverLetterService = inject(CoverLetter);
 
-  constructor(
-    private fb: FormBuilder,
-    private coverLetterService: CoverLetter
-  ) { }
+  protected readonly model = signal(this.coverLetterService.formData());
 
-  ngOnInit(): void {
-    this.initializeForm();
-    this.setupFormSubscription();
-    this.loadFormData();
-  }
+  protected readonly editorForm = form(this.model, (schemaPath) => {
+    required(schemaPath.fullName, { message: 'Full name is required' });
+    required(schemaPath.email, { message: 'Email is required' });
+    email(schemaPath.email, { message: 'Please enter a valid email address' });
+    required(schemaPath.phone, { message: 'Phone number is required' });
+    required(schemaPath.jobTitle, { message: 'Job title is required' });
+    required(schemaPath.companyName, { message: 'Company name is required' });
+    required(schemaPath.introduction, { message: 'Introduction is required' });
+  });
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  private initializeForm(): void {
-    this.form = this.fb.group({
-      fullName: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
-      phone: ['', [Validators.required]],
-      address: [''],
-      jobTitle: ['', [Validators.required]],
-      companyName: ['', [Validators.required]],
-      hiringManager: [''],
-      introduction: ['', [Validators.required]],
-      experience: [''],
-      closing: [''],
-      skills: this.fb.array([])
-    });
-  }
-
-  private setupFormSubscription(): void {
-    this.form.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(value => {
-        const formData: CoverLetterData = {
-          ...value,
-          skills: value.skills.filter((skill: string) => skill.trim() !== ''),
-          date: new Date().toLocaleDateString()
-        };
-        this.coverLetterService.updateFormData(formData);
+  constructor() {
+    // Push every model change back into the shared signal store (autosaved by CoverLetter).
+    effect(() => {
+      const data = this.model();
+      this.coverLetterService.updateFormData({
+        ...data,
+        skills: data.skills.filter((skill) => skill.trim() !== ''),
+        date: new Date().toLocaleDateString(),
       });
-  }
-
-  private loadFormData(): void {
-    const currentData = this.coverLetterService.formData();
-    if (currentData) {
-      this.form.patchValue(currentData);
-      this.setSkills(currentData.skills || []);
-    }
-  }
-
-  get skillsArray(): FormArray {
-    return this.form.get('skills') as FormArray;
+    });
   }
 
   addSkill(): void {
-    this.skillsArray.push(this.fb.control(''));
+    this.model.update((current) => ({
+      ...current,
+      skills: [...current.skills, ''],
+    }));
   }
 
   removeSkill(index: number): void {
-    this.skillsArray.removeAt(index);
-  }
-
-  private setSkills(skills: string[]): void {
-    const skillsArray = this.form.get('skills') as FormArray;
-    skillsArray.clear();
-    skills.forEach(skill => {
-      skillsArray.push(this.fb.control(skill));
-    });
-  }
-
-  isFieldInvalid(fieldName: string): boolean {
-    const field = this.form.get(fieldName);
-    return field ? field.invalid && (field.dirty || field.touched) : false;
+    this.model.update((current) => ({
+      ...current,
+      skills: current.skills.filter((_, i) => i !== index),
+    }));
   }
 
   resetForm(): void {
     const currentTemplate = this.coverLetterService.selectedTemplate();
     if (currentTemplate) {
-      this.form.patchValue(currentTemplate.sampleData);
-      this.setSkills(currentTemplate.sampleData.skills || []);
+      this.model.set({ ...currentTemplate.sampleData });
     }
   }
 }
